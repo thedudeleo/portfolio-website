@@ -1,0 +1,288 @@
+
+
+@font-face {
+  font-family: 'Satoshi-Light';
+  src: url('fonts/Satoshi-Light.woff2') format('woff2'),
+       url('fonts/Satoshi-Light.woff') format('woff'),
+       url('fonts/Satoshi-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Satoshi-LightItalic';
+  src: url('../fonts/Satoshi-LightItalic.woff2') format('woff2'),
+       url('../fonts/Satoshi-LightItalic.woff') format('woff'),
+       url('../fonts/Satoshi-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Satoshi-Regular';
+  src: url('fonts/Satoshi-Regular.woff2') format('woff2'),
+       url('fonts/Satoshi-Regular.woff') format('woff'),
+       url('fonts/Satoshi-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Satoshi-Italic';
+  src: url('fonts/Satoshi-Italic.woff2') format('woff2'),
+       url('fonts/Satoshi-Italic.woff') format('woff'),
+       url('fonts/Satoshi-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Satoshi-Medium';
+  src: url('fonts/Satoshi-Medium.woff2') format('woff2'),
+       url('fonts/Satoshi-Medium.woff') format('woff'),
+       url('fonts/Satoshi-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Satoshi-MediumItalic';
+  src: url('../fonts/Satoshi-MediumItalic.woff2') format('woff2'),
+       url('../fonts/Satoshi-MediumItalic.woff') format('woff'),
+       url('../fonts/Satoshi-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Satoshi-Bold';
+  src: url('fonts/Satoshi-Bold.woff2') format('woff2'),
+       url('fonts/Satoshi-Bold.woff') format('woff'),
+       url('fonts/Satoshi-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Satoshi-BoldItalic';
+  src: url('../fonts/Satoshi-BoldItalic.woff2') format('woff2'),
+       url('../fonts/Satoshi-BoldItalic.woff') format('woff'),
+       url('../fonts/Satoshi-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Satoshi-Black';
+  src: url('fonts/Satoshi-Black.woff2') format('woff2'),
+       url('fonts/Satoshi-Black.woff') format('woff'),
+       url('fonts/Satoshi-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Satoshi-BlackItalic';
+  src: url('fonts/Satoshi-BlackItalic.woff2') format('woff2'),
+       url('fonts/Satoshi-BlackItalic.woff') format('woff'),
+       url('fonts/Satoshi-BlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-display: swap;
+  font-style: italic;
+}
+/**
+* This is a variable font
+* You can control variable axes as shown below:
+* font-variation-settings: wght 900.0;
+*
+* available axes:
+'wght' (range from 300.0 to 900.0
+*/
+@font-face {
+  font-family: 'Satoshi-Variable';
+  src: url('fonts/Satoshi-Variable.woff2') format('woff2'),
+       url('../fonts/Satoshi-Variable.woff') format('woff'),
+       url('../fonts/Satoshi-Variable.ttf') format('truetype');
+  font-weight: 300 900;
+  font-display: swap;
+  font-style: normal;
+}
+/**
+* This is a variable font
+* You can control variable axes as shown below:
+* font-variation-settings: wght 900.0;
+*
+* available axes:
+'wght' (range from 300.0 to 900.0
+*/
+@font-face {
+  font-family: 'Satoshi-VariableItalic';
+  src: url('fonts/Satoshi-VariableItalic.woff2') format('woff2'),
+       url('fonts/Satoshi-VariableItalic.woff') format('woff'),
+       url('fonts/Satoshi-VariableItalic.ttf') format('truetype');
+  font-weight: 300 900;
+  font-display: swap;
+  font-style: italic;
+}
+
+
+
+
+
+
+
+
+* {
+    box-sizing: border-box;
+}
+
+a {
+    color: black; /* Change this to your desired color */
+}
+
+
+hr {
+    border: none; /* Remove the default border */
+    height: 1px; /* Set the height of the line */
+    background-color: black; /* Set the color of the line */
+    margin: 30px 0px; /* Add some vertical spacing */
+    opacity: 0.7; 
+}
+
+body {
+    font-family: 'Satoshi-Regular', sans-serif;
+    background-color: #f4f4f4;
+    text-align: left;
+    margin: 0;
+    font-weight: 300;
+}
+
+body2 {
+    font-family: 'Satoshi-Regular', sans-serif;
+    font-size: 20;
+    font-style: italic;
+}
+
+
+job-title {
+    font-family: 'Satoshi-Regular';
+    font-size: 20px;
+}
+
+h1 {
+    font-family: 'Satoshi-Medium', sans-serif;
+    font-size: 55;
+    margin: 0% 0%;
+}
+
+
+h2 {
+    font-family: 'Satoshi-Light', sans-serif;
+    font-style: italic;
+    font-size: 20;
+    opacity: 1;
+    margin: 0% 0%;
+}
+
+h3 {
+    font-family: 'Satoshi-Medium', sans-serif;
+    font-size: 20;
+}
+
+special {
+    font-family: 'Satoshi-BoldItalic', sans-serif;
+    font-size: 30;
+    font-style: italic;
+}
+
+name {
+    font-family: 'Satoshi-VariableItalic' sans-serif;
+    font-size: 30;
+    font-weight: 900;
+    font-style: italic;
+    margin: 0% 0%;
+    text-align: ;
+
+}
+
+
+
+
+
+
+.left-margin {
+    margin-left: 30px;
+}
+
+
+.container {
+    display: flex;
+    height: 100vh; /* Ensure the container takes the full viewport height */
+
+}
+
+.panel {
+    padding: 20px;
+    overflow-y: auto;
+
+    
+}
+
+.about {
+    flex: 0 0 25%;
+    background-color: lightblue;
+    box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.3);
+    border-radius: 0px 15px 15px 0px;
+}
+
+.project {
+    flex: 0 0 75%;
+    display: flex;
+    padding: 0;
+    flex-direction: column; /* Ensure content flows vertically */
+
+
+}
+
+.project-container {
+    display: flex;
+    width: 100%;
+    padding: 30;
+    flex: 1; /* Allow this container to take remaining space */
+    box-shadow: 8px 8px 16px 4px rgba(0, 0, 0, 0.3);
+    z-index: 1; /* Ensure the shadow is rendered correctly */
+    position: relative; /* Ensure the container is positioned correctly */
+    margin: 0px 0px 0px 0px;
+
+}
+
+.project-media {
+    flex: 7;
+    padding: 30px;
+}
+
+
+.project-media img, iframe {
+    max-width: 100%;
+    box-shadow: 8px 8px 16px 4px rgba(0, 0, 0, 0.3);
+    padding: 0px;
+
+}
+
+.project-info {
+    flex: 5;
+    overflow-y: auto; /* Enable vertical scrolling if content overflows */
+}
+
+.video-scaling {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border: 0;
+}
+
+
+
+
+
+
+
