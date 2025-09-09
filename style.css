@@ -207,6 +207,15 @@ name {
 
 
 
+.swiper {
+  position: relative;
+  width: 75vh;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  color: #999999; /* change color if needed */
+}
 
 
 
@@ -218,6 +227,7 @@ name {
 .container {
     display: flex;
     height: 100vh; /* Ensure the container takes the full viewport height */
+    gap: 20px;
 
 }
 
