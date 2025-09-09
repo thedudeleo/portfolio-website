@@ -128,10 +128,6 @@
 
 
 
-
-
-
-
 * {
     box-sizing: border-box;
 }
@@ -208,13 +204,17 @@ name {
 
 
 .swiper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
   position: relative;
-  width: 75vh;
+  max-width: 100%;
+  box-shadow: 8px 8px 16px 4px rgba(0, 0, 0, 0.3);
 }
 
 .swiper-button-prev,
 .swiper-button-next {
-  color: #999999; /* change color if needed */
+  color: #777777; /* change color if needed */
 }
 
 
@@ -226,8 +226,7 @@ name {
 
 .container {
     display: flex;
-    height: 100vh; /* Ensure the container takes the full viewport height */
-    gap: 20px;
+    height: 100vh;
 
 }
 
@@ -239,49 +238,66 @@ name {
 }
 
 .about {
-    flex: 0 0 25%;
+    flex: 0 0 20%;
+    height: 100vh;
     background-color: lightblue;
     box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.3);
     border-radius: 0px 15px 15px 0px;
 }
 
 .project {
-    flex: 0 0 75%;
+    height: 100vh;
+    overflow-y: auto;
+    min-height:0;
+    flex: 0 0 80%;
     display: flex;
     padding: 0;
     flex-direction: column; /* Ensure content flows vertically */
-
-
+    background-color: lightgrey;
 }
 
 .project-container {
+    align-items: flex-start;
     display: flex;
     width: 100%;
-    padding: 30;
-    flex: 1; /* Allow this container to take remaining space */
+    padding: 2%;
+    flex: 1;
     box-shadow: 8px 8px 16px 4px rgba(0, 0, 0, 0.3);
     z-index: 1; /* Ensure the shadow is rendered correctly */
     position: relative; /* Ensure the container is positioned correctly */
-    margin: 0px 0px 0px 0px;
+    padding-bottom: 20%;
 
+    background-color: aquamarine;
 }
 
 .project-media {
-    flex: 7;
-    padding: 30px;
+    position: sticky;
+    align-self: flex-start;
+    flex: 0 0 60%;
+    max-height: 100vh;
+    overflow: hidden;
+    padding: 0;
+  
+    padding-top: 12px;
+    padding-bottom: 28px;
+    padding-left: 12px;
+    padding-right:28px;
+
+    background-color: blue;
 }
 
 
-.project-media img, iframe {
+.project-media img, .project-media iframe {
     max-width: 100%;
-    box-shadow: 8px 8px 16px 4px rgba(0, 0, 0, 0.3);
-    padding: 0px;
+    box-shadow: 8px 8px 16px 4px rgba(0, 0, 0, 0.2);
+  
 
 }
 
 .project-info {
-    flex: 5;
+    flex: 0 0 40%;
     overflow-y: auto; /* Enable vertical scrolling if content overflows */
+    padding: 2%;
 }
 
 .video-scaling {
