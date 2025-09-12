@@ -230,7 +230,7 @@ name {
 
     .swiper-button-prev,
     .swiper-button-next {
-      color: #777777; /* change color if needed */
+      color: ghostwhite; /* change color if needed */
     }
 
 
@@ -303,8 +303,40 @@ name {
 }
 
 
+.icon-container {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 20px;
+    padding-top: 10px;
+}
+
+.icon-container a {
+    text-decoration: none;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+}
 
 
+.icon:hover {
+  transform: scale(1.1);
+  color: #0066cc;
+}
+
+a {
+  transition: transform 0.2s ease, color 0.2s ease;
+    display: inline-block; /* This is key for transform to work */
+
+}
+
+a:hover {
+  transform: scale(1.03); /* smaller scale for text */
+  color: #0066cc;
 
 
-
+}
