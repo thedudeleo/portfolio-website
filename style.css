@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: 'Satoshi-Light';
-  src: url('fonts/Satoshi-Light.woff2') format('woff2'),
+  src: url('fonts/Satoshi-Light.woff2') format('woff2');
   font-weight: 300;
   font-display: swap;
   font-style: normal;
@@ -10,7 +10,7 @@
 
 @font-face {
   font-family: 'Satoshi-Regular';
-  src: url('fonts/Satoshi-Regular.woff2') format('woff2'),
+  src: url('fonts/Satoshi-Regular.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
   font-style: normal;
@@ -18,7 +18,7 @@
 
 @font-face {
   font-family: 'Satoshi-Medium';
-  src: url('fonts/Satoshi-Medium.woff2') format('woff2'),
+  src: url('fonts/Satoshi-Medium.woff2') format('woff2');
   font-weight: 500;
   font-display: swap;
   font-style: normal;
@@ -26,15 +26,11 @@
 
 @font-face {
   font-family: 'Satoshi-VariableItalic';
-  src: url('fonts/Satoshi-VariableItalic.woff2') format('woff2'),
+  src: url('fonts/Satoshi-VariableItalic.woff2') format('woff2');
   font-weight: 300 900;
   font-display: swap;
   font-style: italic;
 }
-
-
-
-
 
 
 * {
@@ -66,7 +62,7 @@ body {
 
 job-title {
     font-family: 'Satoshi-Regular';
-    font-size: clamp(1.1rem, 2vw, 2.2rem);
+    font-size: clamp(1.1rem, 1.5vw, 2.2rem);
 }
 
 h1 {
@@ -93,7 +89,7 @@ special {
 }
 
 name {
-    font-family: 'Satoshi-VariableItalic' sans-serif;
+    font-family: 'Satoshi-VariableItalic', sans-serif;
     font-size: clamp(1.5rem, 2vw, 3rem);
     font-weight: 900;
     font-style: italic;
@@ -103,11 +99,11 @@ name {
 
 a {
     transition: transform 0.2s ease, color 0.2s ease;
-    display: inline-block; /* This is key for transform to work */
+    display: inline-block;
 }
 
 a:hover {
-    transform: scale(1.03); /* smaller scale for text */
+    transform: scale(1.03);
   color: #0066cc;
 }
 
@@ -142,6 +138,8 @@ a:hover {
     color: ghostwhite;
 }
 
+.swiper .swiper-button-next.swiper-button-disabled,
+.swiper .swiper-button-prev.swiper-button-disabled { display: none; }
 
 
 .panel.left-magin {
@@ -172,7 +170,7 @@ a:hover {
 .project-container {
     align-items: flex-start;
     display: flex;
-
+    flex-wrap: wrap;
     width: 100%;
     padding: 0;
     flex: 1;
@@ -183,12 +181,16 @@ a:hover {
 }
 
 
+.project {
+    flex: 1 1 40%;
+}
+
 .project-media {
     align-self: flex-start;
-    flex: 0 0 60%;
+    flex: 1 1 60%;
     overflow: auto;
     padding: 0;
-    height: 100%;
+    height: auto;
     width: 100%;
     background-color: transparent;
     padding-left: 30px;
@@ -198,9 +200,40 @@ a:hover {
 
 .project-media img, .project-media iframe {
     max-width: 100%;
-    height: 100%;
     background-color: transparent;
-    box-shadow: 8px 8px 16px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Remove inline image baseline gap and prevent stretch causing grey line */
+.project-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 0;
+}
+
+/* Shadow around the video iframe (outside of Swiper) */
+.project-media iframe {
+    box-shadow: 8px 8px 16px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure Swiper surfaces are transparent so page bg doesn't show as a line */
+.swiper,
+.swiper-slide {
+    background-color: transparent;
+}
+
+/* Apply the shadow to the Swiper container so it's not clipped by overflow */
+.project-media .swiper {
+    box-shadow: 8px 8px 16px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Stack media below info on narrower viewports or when wrapping occurs */
+@media (max-width: 1200px) {
+    .project, .project-media {
+        flex: 1 1 100%;
+        padding-left: 0;
+        padding-right: 0;
+    }
 }
 
 
@@ -225,8 +258,8 @@ a:hover {
 }
 
 .icon {
-  width: 32px;
-  height: 32px;
+  width: clamp(24px, 2.5vw, 40px);
+  height: clamp(24px, 2.5vw, 40px);
   transition: transform 0.2s ease, color 0.2s ease;
   cursor: pointer;
 }
