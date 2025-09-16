@@ -98,12 +98,11 @@ name {
 
 
 a {
-    transition: transform 0.2s ease, color 0.2s ease;
+    transition: color 0.2s ease;
     display: inline-block;
 }
 
 a:hover {
-    transform: scale(1.03);
   color: #0066cc;
 }
 
@@ -257,16 +256,18 @@ a:hover {
     text-decoration: none;
 }
 
+
 .icon {
   width: clamp(24px, 2.5vw, 40px);
   height: clamp(24px, 2.5vw, 40px);
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition: filter 0.2s ease;
   cursor: pointer;
 }
 
-
-.icon:hover {
-  transform: scale(1.1);
-  color: #0066cc;
+/* Tint image-based SVG icons to the link blue on hover */
+.icon-container a:hover .icon {
+  filter: invert(21%) sepia(92%) saturate(2378%) hue-rotate(201deg) brightness(92%) contrast(103%);
 }
+
+
 
