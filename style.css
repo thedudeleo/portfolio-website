@@ -1,7 +1,7 @@
 
 
 @font-face {
-  font-family: 'Satoshi-Light';
+  font-family: 'Satoshi';
   src: url('fonts/Satoshi-Light.woff2') format('woff2');
   font-weight: 300;
   font-display: swap;
@@ -9,7 +9,7 @@
 }
 
 @font-face {
-  font-family: 'Satoshi-Regular';
+  font-family: 'Satoshi';
   src: url('fonts/Satoshi-Regular.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
@@ -17,7 +17,7 @@
 }
 
 @font-face {
-  font-family: 'Satoshi-Medium';
+  font-family: 'Satoshi';
   src: url('fonts/Satoshi-Medium.woff2') format('woff2');
   font-weight: 500;
   font-display: swap;
@@ -25,7 +25,7 @@
 }
 
 @font-face {
-  font-family: 'Satoshi-VariableItalic';
+  font-family: 'Satoshi';
   src: url('fonts/Satoshi-VariableItalic.woff2') format('woff2');
   font-weight: 300 900;
   font-display: swap;
@@ -44,57 +44,70 @@ a {
 
 hr {
     border: none; /* Remove the default border */
-    height: 1px; /* Set the height of the line */
+    height: 1.5px; /* Set the height of the line */
     background-color: black; /* Set the color of the line */
     margin: 30px 0px; /* Add some vertical spacing */
     opacity: 0.7; 
 }
 
 body {
-    font-family: 'Satoshi-Regular', sans-serif;
+    font-family: 'Satoshi', sans-serif;
     background-color: #f4f4f4;
     text-align: left;
     margin: 0;
-    font-weight: 300;
-    font-size: clamp(16px, 2vw, 22px);
+    font-weight: 400;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
 }
 
+.body-2 {
+    font-family: 'Satoshi', sans-serif;
+    font-size: clamp(1.25rem, 2vw, 2rem);
+    font-weight: 800;
+    font-style: italic;
+}
 
-job-title {
-    font-family: 'Satoshi-Regular';
-    font-size: clamp(1.1rem, 1.5vw, 2.2rem);
+.body-3 {
+    font-family: 'Satoshi', sans-serif;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-weight: 400;
 }
 
 h1 {
-    font-family: 'Satoshi-Medium', sans-serif;
+    font-family: 'Satoshi', sans-serif;
     font-size: clamp(2.5rem, 5vw, 4rem);
     margin: 0;
 }
 
 
 h2 {
-    font-family: 'Satoshi-Light', sans-serif;
+    font-family: 'Satoshi', sans-serif;
     font-style: italic;
     font-size: clamp(1.25rem, 2.5vw, 2rem);
     margin: 0;
     opacity: 1;
 }
 
-
-special {
-    font-family: 'Satoshi-BoldItalic', sans-serif;
-    font-size: clamp(1.25rem, 2vw, 2rem);
+h3 {
+    font-family: 'Satoshi', sans-serif;
+    font-size: clamp(2rem, 2vw, 4rem);
+    font-weight: 700;
     font-style: italic;
-
+    margin-bottom: 2%;
 }
 
-name {
-    font-family: 'Satoshi-VariableItalic', sans-serif;
-    font-size: clamp(1.5rem, 2vw, 3rem);
-    font-weight: 900;
-    font-style: italic;
+h4 {
+    font-family: 'Satoshi';
+    font-size: clamp(1.1rem, 1.5vw, 2.2rem);
+    font-weight: 400;
     margin: 0;
 }
+
+
+
+
+
+
+
 
 
 a {
@@ -151,9 +164,9 @@ a:hover {
     flex: 0 0 20%;
     height: 100vh;
     background-color: lightblue;
-    padding-right: 0.5%;
-    padding-left: 1.5%;
-    padding-top: 3%;
+    padding-right: 1%;
+    padding-left: 1%;
+    padding-top: 0;
 }
 
 .project-description {
@@ -238,7 +251,8 @@ a:hover {
 
 
 .video-scaling {
-    width: auto;
+    display: block;
+    width: 100%;
     height: auto;
     aspect-ratio: 16/9;
 }
