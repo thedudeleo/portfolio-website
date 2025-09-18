@@ -42,9 +42,10 @@ a {
 }
 
 
+
 hr {
     border: none; /* Remove the default border */
-    height: 1.5px; /* Set the height of the line */
+    height: 2px; /* Set the height of the line */
     background-color: black; /* Set the color of the line */
     margin: 30px 0px; /* Add some vertical spacing */
     opacity: 0.7; 
@@ -59,22 +60,12 @@ body {
     font-size: clamp(1.1rem, 2vw, 1.4rem);
 }
 
-.body-2 {
-    font-family: 'Satoshi', sans-serif;
-    font-size: clamp(1.25rem, 2vw, 2rem);
-    font-weight: 800;
-    font-style: italic;
-}
 
-.body-3 {
-    font-family: 'Satoshi', sans-serif;
-    font-size: clamp(1.1rem, 2vw, 1.4rem);
-    font-weight: 400;
-}
+
 
 h1 {
     font-family: 'Satoshi', sans-serif;
-    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-size: clamp(2.5rem, 5vw, 7rem);
     margin: 0;
 }
 
@@ -103,13 +94,6 @@ h4 {
 }
 
 
-
-
-
-
-
-
-
 a {
     transition: color 0.2s ease;
     display: inline-block;
@@ -119,7 +103,32 @@ a:hover {
   color: #0066cc;
 }
 
+blockquote {
+  border-left: 4px solid #ccc;
+  margin: 1em 0;
+  padding-left: 1em;
+  font-style: italic;
+}
 
+
+
+.body-2 {
+    font-family: 'Satoshi', sans-serif;
+    font-size: clamp(1.25rem, 2vw, 4rem);
+    font-weight: 800;
+    font-style: italic;
+}
+
+.body-3 {
+    font-family: 'Satoshi', sans-serif;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-weight: 400;
+    background-color: #DEEBEF;
+    padding-right: 5%;
+    padding-left: 5%;
+    padding-top: 10%;
+    padding-bottom: 10%;
+}
 
 .container {
     display: flex;
@@ -154,7 +163,7 @@ a:hover {
 .swiper .swiper-button-prev.swiper-button-disabled { display: none; }
 
 
-.panel.left-magin {
+.panel.left-margin {
     text-justify: center;
 }
 
@@ -163,10 +172,9 @@ a:hover {
 .about {
     flex: 0 0 20%;
     height: 100vh;
+    margin: 0;
+    padding:0;
     background-color: lightblue;
-    padding-right: 1%;
-    padding-left: 1%;
-    padding-top: 0;
 }
 
 .project-description {
@@ -215,7 +223,6 @@ a:hover {
     background-color: transparent;
 }
 
-/* Remove inline image baseline gap and prevent stretch causing grey line */
 .project-media img {
     display: block;
     width: 100%;
@@ -223,23 +230,19 @@ a:hover {
     border: 0;
 }
 
-/* Shadow around the video iframe (outside of Swiper) */
 .project-media iframe {
     box-shadow: 8px 8px 16px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Ensure Swiper surfaces are transparent so page bg doesn't show as a line */
 .swiper,
 .swiper-slide {
     background-color: transparent;
 }
 
-/* Apply the shadow to the Swiper container so it's not clipped by overflow */
 .project-media .swiper {
     box-shadow: 8px 8px 16px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Stack media below info on narrower viewports or when wrapping occurs */
 @media (max-width: 1200px) {
     .project, .project-media {
         flex: 1 1 100%;
@@ -250,20 +253,86 @@ a:hover {
 
 
 
+.ratingcontainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+   }
+
+.awardcontainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.awards {
+    width: 30%;
+    padding: 0%;
+}
+
+.rating {
+    width: 90%;
+     padding: 0%;
+     box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.2);
+
+}
+
+.headshot {
+
+    max-width: 70%;
+}
+
+.aboutme {
+    background-color: lightblue;
+    padding-right: 10%;
+    padding-left: 10%;
+    padding-bottom: 10%;
+}
+
+
+
 .video-scaling {
     display: block;
     width: 100%;
     height: auto;
     aspect-ratio: 16/9;
+    box-shadow: 8px 8px 16px 4px rgba(0, 0, 0, 0.3);
 }
 
 
+.sticky-element {
+  position: fixed;
+  top: 2%;
+  right: 2%;
+  background-color: lightblue;
+  padding: 15px 15px;
+  border-radius: 0px;
+  z-index: 100;
+
+
+
+}
+
+.sticky-element a {
+  color: white;
+  text-decoration: none;
+}
+
 .icon-container {
     display: flex;
-    justify-content: left;
+    flex-direction: row;
+    justify-content: center;
     align-items: center;
-    gap: 20px;
-    padding-top: 10px;
+    gap: 10px;
+    background-color: transparent;
+
+}
+
+.headshoticons {
+    display: flex;
+    justify-content: center;
 }
 
 .icon-container a {
@@ -272,13 +341,12 @@ a:hover {
 
 
 .icon {
-  width: clamp(24px, 2.5vw, 40px);
-  height: clamp(24px, 2.5vw, 40px);
+  width: clamp(30px, 2.5vw, 50px);
+  height: clamp(30px, 2.5vw, 50px);
   transition: filter 0.2s ease;
   cursor: pointer;
 }
 
-/* Tint image-based SVG icons to the link blue on hover */
 .icon-container a:hover .icon {
   filter: invert(21%) sepia(92%) saturate(2378%) hue-rotate(201deg) brightness(92%) contrast(103%);
 }
