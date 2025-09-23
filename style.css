@@ -191,7 +191,8 @@ blockquote {
     min-height:0;
     flex: 0 0 80%;
     display: flex;
-    padding: 3%;
+    padding-left: 3%;
+    padding-left: 3%;
     flex-direction: column;
     background-color: transparent;
 }
