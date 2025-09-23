@@ -184,10 +184,11 @@ blockquote {
     min-height:0;
     flex: 0 0 80%;
     display: flex;
-    padding: 2%;
+    padding: 3%;
     flex-direction: column;
     background-color: transparent;
 }
+
 
 .project-container {
     align-items: flex-start;
@@ -205,6 +206,7 @@ blockquote {
 
 .project {
     flex: 1 1 40%;
+    background-color: transparent;
 }
 
 .project-media {
@@ -217,7 +219,97 @@ blockquote {
     background-color: transparent;
     padding-left: 30px;
     padding-right:30px;
+    padding-bottom: 30px;
 }
+
+
+
+
+
+
+
+/* Project header styling */
+.project-header {
+    width: 100%;
+    padding: 2%;
+    background-color: transparent;
+}
+
+/* For medium screens - stack content vertically with headers first */
+@media (max-width: 1200px) and (min-width: 801px) {
+    .about {
+        flex: 0 0 30%;
+    }
+    
+    .project-container {
+        flex-direction: column;
+    }
+    
+    .project-header {
+        order: 1;
+    }
+    
+    .project-media {
+        order: 2;
+    }
+    
+    .project {
+        order: 3;
+    }
+    
+    .project, .project-media {
+        flex: 1 1 100%;
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+/* For small screens - stack everything */
+@media (max-width: 800px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .about {
+        flex: 0 0 auto;
+        height: auto;
+        width: 100%;
+        order: -1;
+    }
+    
+    .panel.project {
+        flex: 1;
+        height: auto;
+    }
+    
+    .project-container {
+        flex-direction: column;
+    }
+    
+    .project-header {
+        order: 1;
+    }
+    
+    .project-media {
+        order: 2;
+    }
+    
+    .project {
+        order: 3;
+    }
+    
+    .project, .project-media {
+        flex: 1 1 100%;
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+
+
+
+
 
 
 .project-media img, .project-media iframe {
@@ -245,7 +337,7 @@ blockquote {
     box-shadow: 8px 8px 16px 4px rgba(0, 0, 0, 0.3);
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1000px) {
     .project, .project-media {
         flex: 1 1 100%;
         padding-left: 0;
