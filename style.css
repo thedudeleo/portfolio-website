@@ -113,12 +113,19 @@ blockquote {
 }
 
 
+.projects-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+ 
+}
 
 .body-2 {
     font-family: 'Satoshi', sans-serif;
     font-size: clamp(1.25rem, 2vw, 4rem);
     font-weight: 800;
     font-style: italic;
+
 }
 
 .body-3 {
@@ -233,6 +240,95 @@ blockquote {
     width: 100%;
     padding: 2%;
     background-color: transparent;
+}
+
+
+
+
+/* Create a container for headshot and intro text on mobile */
+.intro-section {
+    background-color: transparent;
+}
+
+
+
+.headshotcontainer {
+    display: flex;
+    justify-content: center;
+    background-color: transparent;
+
+}
+
+.headshot {
+    width: 100%; /* fill parent container */
+    height: auto;   /* maintain aspect ratio */
+    display: block; /* remove inline spacing issues */
+    background-color: transparent;
+    max-width: 70%;
+}
+
+
+.intro-text {
+}
+
+@media (max-width: 800px) {
+    .intro-section {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .headshotcontainer {
+        max-width: 20vw;
+        flex: 0 0 auto; /* Don't grow or shrink */
+        justify-content: flex-start; /* Align left instead of center */
+        align-self: center;
+    }
+
+    .headshot {
+        max-width: 100%;  /* image fills container on mobile */
+    }
+    
+    
+    .intro-text {
+        flex: 1; /* Take up remaining space */
+        
+    }
+}
+
+
+
+
+
+
+/* Hide body-3 on small screens */
+@media (max-width: 800px) {
+    .body-3 {
+        display: none;
+    }
+}
+
+/* Create a duplicate of body-3 content that only shows on small screens at the bottom */
+.body-3-mobile {
+    display: none; /* Hidden by default */
+}
+
+@media (max-width: 800px) {
+    .body-3-mobile {
+        display: block;
+        font-family: 'Satoshi', sans-serif;
+        font-size: clamp(1rem, 1vw, 1.2rem);
+        font-weight: 400;
+        background-color: #DEEBEF;
+        padding-right: 5%;
+        padding-left: 5%;
+        padding-top: 10%;
+        padding-bottom: 10%;
+        width: 100%;
+        order: 999; /* Ensure it appears last */
+    }
 }
 
 /* For medium screens - stack content vertically with headers first */
@@ -373,10 +469,6 @@ blockquote {
 
 }
 
-.headshot {
-
-    max-width: 70%;
-}
 
 .aboutme {
     background-color: lightblue;
@@ -424,10 +516,7 @@ blockquote {
 
 }
 
-.headshoticons {
-    display: flex;
-    justify-content: center;
-}
+
 
 .icon-container a {
     text-decoration: none;
