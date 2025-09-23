@@ -277,7 +277,7 @@ blockquote {
         flex-direction: row;
         align-items: center;
         gap: 15px;
-        margin-bottom: 20px;
+      
     }
     
     .headshotcontainer {
@@ -474,7 +474,7 @@ blockquote {
     background-color: lightblue;
     padding-right: 10%;
     padding-left: 10%;
-    padding-bottom: 10%;
+    padding-bottom: 40px;
 }
 
 
