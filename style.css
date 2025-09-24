@@ -130,7 +130,7 @@ blockquote {
 
 .body-3 {
     font-family: 'Satoshi', sans-serif;
-    font-size: clamp(1rem, 1vw, 1.2rem);
+    font-size: clamp(1.1rem, 1vw, 1.2rem);
     font-weight: 400;
     background-color: #DEEBEF;
     padding-right: 5%;
