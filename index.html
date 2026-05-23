@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Léo Félix Smith — Level Designer</title>
+  <meta name="description" content="Portfolio of Léo Félix Smith — French-American level designer based in Stockholm. Selected work: Eriksholm, ReLeap, Provincia." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=110" />
+
+  <!-- Pre-hide reveal-eligible elements before paint to avoid FOUC.
+       Gated on .js so no-JS visitors still see content. -->
+  <script>document.documentElement.classList.add('js')</script>
+  <style>
+    :where(.js) :where(
+      .project-header,
+      .project-gif,
+      .project-meta,
+      .project-body,
+      .project-columns,
+      .gallery-wrapper,
+      .reviews blockquote,
+      .awards-label,
+      .awards-row,
+      .project-video,
+      .project-links,
+      .about-grid > *
+    ) {
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor (hover-capable devices only). JS moves it under <html>
+       at startup so the page-zoom transform on <body> doesn't displace it. -->
+  <div id="cursor" aria-hidden="true"></div>
+
+  <!-- Nav circle — each item is [dot] + [label]. Dots stay put across all
+       states; labels fade in/out so transitions feel coherent. -->
+  <aside id="nav-circle" class="nav-circle at-top" aria-label="Section navigation">
+    <!-- Close button only renders inside the mobile expanded pill (CSS-gated).
+         On desktop the menu auto-collapses by proximity so this is dead UI. -->
+    <button class="nav-close" type="button" aria-label="Close menu">×</button>
+    <a class="nav-circle-item active" href="#top"       data-section="top"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">Welcome</span></a>
+    <a class="nav-circle-item"        href="#eriksholm" data-section="eriksholm"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">Eriksholm</span></a>
+    <a class="nav-circle-item"        href="#releap"    data-section="releap"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">ReLeap</span></a>
+    <a class="nav-circle-item"        href="#provincia" data-section="provincia"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">Provincia</span></a>
+    <a class="nav-circle-item"        href="#about"     data-section="about"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">About</span></a>
+  </aside>
+
+
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <div class="container">
+        <div class="hero-main">
+          <h1 class="hero-name">Léo Félix Smith</h1>
+          <p class="hero-role">Level Designer · Stockholm</p>
+
+          <p class="hero-bio">
+            Shipping polished player experiences for indie and AA studios.
+          </p>
+          <ul class="contributions hero-skills">
+            <li>level blockouts</li>
+            <li>encounter design</li>
+            <li>NPC scripting</li>
+            <li>technical implementation</li>
+            <li>making things look and feel polished</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="projects" id="projects">
+
+      <!-- ============ ERIKSHOLM ============ -->
+      <article class="project" id="eriksholm">
+        <div class="container">
+
+          <header class="project-header">
+            <p class="project-studio">River End Games</p>
+            <h2 class="project-title">Eriksholm</h2>
+          </header>
+
+          <!-- Gameplay video (autoplay loop) -->
+          <figure class="project-gif">
+            <video src="assets/eriksholm/gameplay.mp4" autoplay loop muted playsinline aria-label="Eriksholm gameplay"></video>
+          </figure>
+
+          <div class="project-intro">
+            <div class="project-body">
+              <p>
+                When Hanna's brother, Herman, disappears and the police begin to
+                pursue him, her search sets off a chain of catastrophic events that
+                will reshape the city.
+              </p>
+            </div>
+            <p class="project-meta">Unreal Engine 5</p>
+          </div>
+
+          <div class="project-columns">
+            <div>
+              <h3 class="section-label">My contributions</h3>
+              <ul class="contributions">
+                <li>Led final polish across all levels</li>
+                <li>Designed puzzles and player encounters</li>
+                <li>Blocked out levels</li>
+                <li>Scripted NPC behavior and events</li>
+                <li>Mocked up and polished in-game cutscenes</li>
+                <li>Implemented VO, SFX, and animation</li>
+                <li>Facilitated playtests and followed up on player feedback</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="section-label">Ratings <span class="muted">(as of May 2026)</span></h3>
+              <div class="ratings">
+                <div class="rating-card"><img src="assets/eriksholm/steamrating.jpg" alt="Steam rating" /></div>
+                <div class="rating-card"><img src="assets/eriksholm/ps5rating.jpg" alt="PS5 rating" /></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-body">
+            <p>
+              Eriksholm is River End Games' debut, built by an 18-person team. Released July 2025.
+            </p>
+          </div>
+
+          <!-- Gallery -->
+          <div class="gallery" data-gallery="Eriksholm">
+            <img src="assets/eriksholm/riverend1.jpg" alt="Eriksholm screenshot 1" loading="lazy" />
+            <img src="assets/eriksholm/riverend2.jpg" alt="Eriksholm screenshot 2" loading="lazy" />
+            <img src="assets/eriksholm/riverend3.jpg" alt="Eriksholm screenshot 3" loading="lazy" />
+            <img src="assets/eriksholm/riverend4.jpg" alt="Eriksholm screenshot 4" loading="lazy" />
+            <img src="assets/eriksholm/riverend5.jpg" alt="Eriksholm screenshot 5" loading="lazy" />
+          </div>
+
+          <!-- Reviews -->
+          <div class="reviews">
+            <blockquote>
+              <p>"Eriksholm: The Stolen Dream deserves to go down as a landmark stealth game."</p>
+              <footer><span class="score">10/10</span> — The Sixth Axis</footer>
+            </blockquote>
+            <blockquote>
+              <p>"Eriksholm: The Stolen Dream is a wonderful adventure in a gorgeous world, and deserves to put River End Games well and truly on the map."</p>
+              <footer><span class="score">9.5/10</span> — Loot Level Chill</footer>
+            </blockquote>
+            <blockquote>
+              <p>"It's easily one of the most enjoyable games I've played this year and a welcomed reminder that creativity and talent can still find a platform to shine within our troubled industry."</p>
+              <footer><span class="score">9/10</span> — GamingBible</footer>
+            </blockquote>
+          </div>
+
+          <div class="project-video" data-video-id="WvoOGK7Z-Mo" data-title="Eriksholm — gameplay video">
+            <button class="video-play" aria-label="Play Eriksholm gameplay video"
+              style="background-image: url('https://i.ytimg.com/vi/WvoOGK7Z-Mo/maxresdefault.jpg')">
+              <svg viewBox="0 0 80 80" class="play-icon" aria-hidden="true">
+                <circle cx="40" cy="40" r="32" fill="rgba(255,255,255,0.95)" />
+                <polygon points="33,24 33,56 58,40" fill="#0c0c0d" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- External links -->
+          <div class="project-links">
+            <a href="https://store.steampowered.com/app/2377280/Eriksholm_The_Stolen_Dream/" target="_blank" rel="noopener"><span class="arrow">→</span> Steam Page</a>
+            <a href="https://www.metacritic.com/game/eriksholm-the-stolen-dream/" target="_blank" rel="noopener"><span class="arrow">→</span> Metacritic</a>
+            <a href="https://eriksholmgame.com" target="_blank" rel="noopener"><span class="arrow">→</span> eriksholmgame.com</a>
+            <a href="https://riverendgames.com" target="_blank" rel="noopener"><span class="arrow">→</span> riverendgames.com</a>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- ============ RELEAP ============ -->
+      <article class="project" id="releap">
+        <div class="container">
+
+          <header class="project-header">
+            <p class="project-studio">Uppsala University</p>
+            <h2 class="project-title">ReLeap</h2>
+          </header>
+
+          <figure class="project-gif">
+            <video src="assets/releap/gameplay.mp4" autoplay loop muted playsinline aria-label="ReLeap gameplay"></video>
+          </figure>
+
+          <div class="project-intro">
+            <div class="project-body">
+              <p>
+                A five-minute side-scrolling runner. Jump between rooftops, dodge obstacles, and angle your charge jumps to stick the landing.
+              </p>
+            </div>
+            <p class="project-meta">Unity</p>
+          </div>
+
+          <div class="project-columns">
+            <div>
+              <h3 class="section-label">My contributions</h3>
+              <ul class="contributions">
+                <li>Kept the project on schedule</li>
+                <li>Organized, facilitated, and documented all playtest sessions</li>
+                <li>Developed the business strategy and model</li>
+                <li>Secured funding for my team to travel to GDC</li>
+                <li>Pitched ReLeap to investors in San Francisco at GDC</li>
+                <li>Produced all game music and SFX in Ableton Live and implemented in Unity</li>
+                <li>Designed levels in Unity</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="section-label">Showcased at</h3>
+              <ul class="link-list">
+                <li><a href="https://game.speldesign.uu.se/projects/arcade-games/releap/" target="_blank" rel="noopener"><span class="arrow">→</span> Gotland Game Conference 2018</a></li>
+                <li><a href="https://www.gameawards.se/Games/2018/releap" target="_blank" rel="noopener"><span class="arrow">→</span> Swedish Game Awards 2018</a></li>
+                <li><a href="https://www.gamedeveloper.com/marketing/alt-ctrl-gdc-showcase-i-releap-i-" target="_blank" rel="noopener"><span class="arrow">→</span> Game Developers Conference 2019, alternative control exhibit</a></li>
+              </ul>
+              <p class="muted">
+                During GDC 2019 we also pitched a mobile prototype of ReLeap at
+                the Silicon Viking Investor and Big Indie Pitch events.
+              </p>
+            </div>
+          </div>
+
+          <div class="project-body">
+            <p>
+              ReLeap was played on a custom arcade-like controller. A handlebar to jump and charge jumps, a foot slider to slide beneath obstacles.
+            </p>
+          </div>
+
+          <div class="gallery" data-gallery="ReLeap">
+            <img src="assets/releap/releap1.jpg" alt="ReLeap screenshot 1" loading="lazy" />
+            <img src="assets/releap/releap2.jpg" alt="ReLeap screenshot 2" loading="lazy" />
+            <img src="assets/releap/releap3.jpg" alt="ReLeap screenshot 3" loading="lazy" />
+            <img src="assets/releap/releap4.jpg" alt="ReLeap screenshot 4" loading="lazy" />
+            <img src="assets/releap/releap5.jpg" alt="ReLeap screenshot 5" loading="lazy" />
+            <img src="assets/releap/releap6.jpg" alt="ReLeap screenshot 6" loading="lazy" />
+            <img src="assets/releap/releap7.jpg" alt="ReLeap screenshot 7" loading="lazy" />
+            <img src="assets/releap/releap8.jpg" alt="ReLeap screenshot 8" loading="lazy" />
+            <img src="assets/releap/releap9.jpg" alt="ReLeap screenshot 9" loading="lazy" />
+            <img src="assets/releap/releap10.jpg" alt="ReLeap screenshot 10" loading="lazy" />
+            <img src="assets/releap/releap11.jpg" alt="ReLeap screenshot 11" loading="lazy" />
+            <img src="assets/releap/releap12.jpg" alt="ReLeap screenshot 12" loading="lazy" />
+          </div>
+
+          <h3 class="section-label awards-label">Awards</h3>
+          <div class="awards-row">
+            <img src="assets/releap/releap_gdc.png" alt="GDC Alternative Control nomination, 2019" />
+            <img src="assets/releap/releap_diversityeffort.png" alt="Diversity Effort award" />
+            <img src="assets/releap/releap_woke.png" alt="Woke award" />
+          </div>
+
+          <div class="project-video" data-video-id="GugONZJkn5s" data-title="ReLeap — gameplay video">
+            <button class="video-play" aria-label="Play ReLeap gameplay video"
+              style="background-image: url('https://i.ytimg.com/vi/GugONZJkn5s/maxresdefault.jpg')">
+              <svg viewBox="0 0 80 80" class="play-icon" aria-hidden="true">
+                <circle cx="40" cy="40" r="32" fill="rgba(255,255,255,0.95)" />
+                <polygon points="33,24 33,56 58,40" fill="#0c0c0d" />
+              </svg>
+            </button>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- ============ PROVINCIA ============ -->
+      <article class="project" id="provincia">
+        <div class="container">
+
+          <header class="project-header">
+            <p class="project-studio">Uppsala University</p>
+            <h2 class="project-title">Provincia</h2>
+          </header>
+
+          <figure class="project-gif">
+            <video src="assets/provincia/gameplay.mp4" autoplay loop muted playsinline aria-label="Provincia gameplay"></video>
+          </figure>
+
+          <div class="project-intro">
+            <div class="project-body">
+              <p>
+                Provincia is an action-adventure dogfighting game. Play a bounty hunter with a personalized aircraft, taking quests across the world.
+              </p>
+            </div>
+            <p class="project-meta">Unity</p>
+          </div>
+
+          <div class="project-columns">
+            <div>
+              <h3 class="section-label">My contributions</h3>
+              <ul class="contributions">
+                <li>Kept the project on track and on schedule</li>
+                <li>Ran team meetings and kept things moving</li>
+                <li>Organized, facilitated, and documented all playtest sessions</li>
+                <li>Produced all SFX in Ableton Live and implemented them in FMOD</li>
+                <li>Created and implemented an interactive music system in FMOD</li>
+                <li>Pitched Provincia at the Gotland Game Conference 2019</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="section-label">Showcased at</h3>
+              <ul class="link-list">
+                <li><a href="https://game.speldesign.uu.se/projects/3d-games/provincia/" target="_blank" rel="noopener"><span class="arrow">→</span> Gotland Game Conference 2019</a></li>
+                <li><a href="https://www.gameawards.se/Games/2019/provincia" target="_blank" rel="noopener"><span class="arrow">→</span> Swedish Game Awards 2019</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="gallery" data-gallery="Provincia">
+            <img src="assets/provincia/provincia1.jpg" alt="Provincia screenshot 1" loading="lazy" />
+            <img src="assets/provincia/provincia2.jpg" alt="Provincia screenshot 2" loading="lazy" />
+            <img src="assets/provincia/provincia3.jpg" alt="Provincia screenshot 3" loading="lazy" />
+            <img src="assets/provincia/provincia4.jpg" alt="Provincia screenshot 4" loading="lazy" />
+            <img src="assets/provincia/provincia5.jpg" alt="Provincia screenshot 5" loading="lazy" />
+          </div>
+
+          <h3 class="section-label awards-label">Awards</h3>
+          <div class="awards-row">
+            <img src="assets/provincia/provincia_bestaudio.png" alt="Best Execution in Audio award, Swedish Game Awards 2019" />
+            <img src="assets/provincia/provincia_bestexhibit.png" alt="Best Exhibit award" />
+            <img src="assets/provincia/provincia_juryspotlight.png" alt="Jury Spotlight award" />
+          </div>
+
+          <div class="project-video" data-video-id="g4ztktUtWaA" data-title="Provincia — gameplay video">
+            <button class="video-play" aria-label="Play Provincia gameplay video"
+              style="background-image: url('https://i.ytimg.com/vi/g4ztktUtWaA/maxresdefault.jpg')">
+              <svg viewBox="0 0 80 80" class="play-icon" aria-hidden="true">
+                <circle cx="40" cy="40" r="32" fill="rgba(255,255,255,0.95)" />
+                <polygon points="33,24 33,56 58,40" fill="#0c0c0d" />
+              </svg>
+            </button>
+          </div>
+
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about" id="about">
+      <div class="container about-grid">
+        <div>
+          <div class="about-image">
+            <img src="assets/leoheadshot.png" alt="Léo Félix Smith" />
+          </div>
+
+          <div class="about-contact">
+            <a id="contact-email" href="#" data-u="smithbros.leo" data-d="gmail.com" rel="noopener"><span class="arrow">→</span> <span class="contact-email-text">Email</span></a>
+            <a href="https://www.linkedin.com/in/leofelixsmith/" target="_blank" rel="noopener"><span class="arrow">→</span> LinkedIn</a>
+          </div>
+        </div>
+        <div class="about-body">
+          <p>
+            Game design sits at the intersection of technical, psychological, and creative thinking. I find that endlessly interesting.
+          </p>
+
+          <h3 class="section-label spaced">What matters to me</h3>
+          <ul class="contributions">
+            <li>small teams doing ambitious things</li>
+            <li>games that respect the player</li>
+            <li>getting it right, not just done</li>
+          </ul>
+
+          <h3 class="section-label spaced">Education</h3>
+          <ul class="plain-list">
+            <li><strong>MS Entrepreneurship and Business Design</strong> · Chalmers University of Technology · 2020–2022</li>
+            <li><strong>BA Game Design and Project Management</strong> · Uppsala University · 2017–2020</li>
+          </ul>
+
+          <h3 class="section-label spaced">Languages</h3>
+          <ul class="tag-list">
+            <li>English (native)</li>
+            <li>German (fluent)</li>
+            <li>French (fluent)</li>
+            <li>Swedish (proficient)</li>
+          </ul>
+
+          <h3 class="section-label spaced">In my free time</h3>
+          <ul class="tag-list">
+            <li>🧗🏻 climbing</li>
+            <li>🎹 producing music</li>
+            <li>🌳 spending time in nature</li>
+            <li>🎲 board game nights with friends</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js?v=70"></script>
+</body>
+</html>

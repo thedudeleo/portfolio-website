@@ -1,0 +1,1258 @@
+/* =====================================================
+   Léo Félix Smith — Portfolio
+   ===================================================== */
+
+:root {
+  --bg: #0c0c0d;
+  --surface: #141416;
+  --surface-2: #1b1b1e;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text: #ededed;
+  --text-muted: #8b8b93;
+  --text-dim: #5a5a62;
+  --accent: #9ab09a;
+  --accent-soft: rgba(154, 176, 154, 0.15);
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+
+  --radius: 6px;
+  --radius-lg: 12px;
+
+  --container: 1080px;
+  --container-narrow: 760px;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  /* Hide native scrollbars completely — page still scrolls via wheel,
+     touch, and keyboard. The nav-circle's section dots indicate where
+     the user is on the page, so the scrollbar's positional cue is not
+     missed. */
+  scrollbar-width: none;          /* Firefox */
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;                  /* Chrome / Safari / newer Edge */
+}
+body {
+  scrollbar-width: none;
+}
+
+/* Hard scroll lock applied during the page-zoom. !important ensures it
+   wins over any other rule, and `touch-action: none` blocks iOS rubber-
+   band / inertia that overflow:hidden alone doesn't catch. */
+html.zoom-locked,
+body.zoom-locked {
+  overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+}
+
+/* Surrounding-content fade during page-zoom. Elements above the clicked
+   image get .zoom-fade-up (translate up + fade out); elements below
+   get .zoom-fade-down. JS adds the classes when zoom starts. The
+   `body.is-zoomed` selector controls when the destination state
+   applies, so removing `is-zoomed` at the start of zoomOut reverses
+   the animation. Same easing/duration as the body zoom transform. */
+.zoom-fade-up,
+.zoom-fade-down {
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+body.is-zoomed .zoom-fade-up {
+  opacity: 0;
+  transform: translateY(-48px);
+}
+body.is-zoomed .zoom-fade-down {
+  opacity: 0;
+  transform: translateY(48px);
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+
+a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.2s var(--ease);
+}
+a:hover { color: var(--accent); }
+
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.muted { color: var(--text-muted); font-weight: 400; }
+.small { font-size: 0.875rem; }
+
+/* =====================================================
+   NAV CIRCLE — column of dots/labels; collapses on scroll
+   ===================================================== */
+/* =====================================================
+   NAV — each row is [dot] + [label]. Dots stay put across all states; only
+   labels fade/slide in and out, so transitions feel coherent (vs. the old
+   "labels appear, dots disappear" swap that snapped between two layouts).
+
+   States:
+   - .at-top         (welcome page)   → labels visible, dots hidden
+   - .collapsed      (scrolled idle)  → dots visible, labels hidden
+   - default scrolled (hover/proximity) → dots + labels both visible
+   ===================================================== */
+/* One layout, one position. The nav is a dark liquid-glass pill anchored
+   at the content's right margin (just inside the content edge), with
+   labels collapsed by default and revealed on hover-proximity. Items are
+   always row-reverse (label LEFT of dot) so the dots stay lined up against
+   the pill's right edge regardless of label visibility.
+
+   .at-top is the welcome variant — same pill geometry, same row direction,
+   just transparent (no glass) and with auto-visible labels and a wider
+   row gap so the welcome page reads as airy text rather than a UI chip.
+
+   The forward/reverse cascade between the two states is handled entirely
+   by CSS via direction-aware transition delays:
+     Forward (welcome → scrolled, .at-top removed):
+       Labels collapse immediately, glass/gap change after 0.4s.
+     Reverse (scrolled → welcome, .at-top added):
+       Glass/gap change immediately, labels open after 0.4s. */
+.nav-circle {
+  position: fixed;
+  /* Aligned with the top of the gameplay video on a project page (JS
+     overrides this to track .hero-bio on the welcome page). */
+  top: 200px;
+  /* Pill sits 16px inside the content's right edge so it doesn't kiss the
+     content margin. On viewports where the content already runs near the
+     window edge, fall back to a 16px gap from the viewport edge. */
+  right: max(calc(50% - 500px), 16px);
+  left: auto;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 14px 18px;
+  background: rgba(12, 12, 13, 0.55);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  box-shadow:
+    0 6px 22px rgba(0, 0, 0, 0.5),
+    0 0 28px rgba(154, 176, 154, 0.12);
+  /* Default-state transitions (apply when LEAVING .at-top, i.e. forward
+     direction). Glass + gap have a 0.4s delay so they wait until labels
+     have closed before snapping into the pill. */
+  transition:
+    gap 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.4s,
+    padding 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s,
+    background 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s,
+    border-color 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s,
+    box-shadow 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s,
+    -webkit-backdrop-filter 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s,
+    backdrop-filter 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s;
+}
+
+.nav-circle.at-top {
+  /* Welcome variant — same position, transparent. Wider gap because labels
+     are auto-visible and the column needs breathing room without the pill
+     to contain it. */
+  gap: 18px;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  /* At-top transitions (apply when ENTERING .at-top, i.e. reverse). Glass
+     and gap snap immediately so the pill dissolves while labels are still
+     hidden; labels open afterward via their own delayed rule below. */
+  transition:
+    gap 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+    background 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+    border-color 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+    -webkit-backdrop-filter 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+    backdrop-filter 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.nav-circle-item {
+  display: flex;
+  /* Single direction across all states — dots stay anchored against the
+     pill's right edge, labels grow leftward as they expand. */
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 16px;
+  padding: 0;
+  color: var(--text-muted);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  /* Y shift drives the per-row vertical spread when hover-expanded; X is
+     unused now (kept as a no-op for compatibility with the active-row
+     cascade-stagger that other rules read off). */
+  --shift-y: 0px;
+  transform: translateY(var(--shift-y));
+  transition-property: color, transform;
+  transition-duration: 0.2s, 0.55s;
+  transition-timing-function: var(--ease), cubic-bezier(0.4, 0, 0.2, 1);
+  transition-delay: 0s, calc(var(--abs-n, 0) * 0.07s);
+}
+.nav-circle-item:hover { color: var(--text); }
+.nav-circle-item.active { color: var(--text); }
+
+/* Hover-expanded scrolled state: spread items vertically AROUND the active
+   row. Active stays at translateY(0); rows above slide up by N*8px,
+   rows below slide down by N*8px. Combined with the cascade-from-active
+   stagger above, this radiates outward in time as well as space. */
+.nav-circle:not(.at-top):not(.collapsed) .nav-circle-item {
+  --shift-y: calc(var(--n, 0) * 8px);
+}
+
+/* Collapsing direction: when the destination is .collapsed, run the
+   cascade INWARD — outermost rows tuck back first, active last. */
+.nav-circle.collapsed .nav-circle-item {
+  transition-delay: 0s, calc(var(--inv-abs-n, 0) * 0.07s);
+}
+
+/* The dot is the active indicator (replaces the old left border line). */
+.nav-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.32);
+  flex-shrink: 0;
+  transition:
+    background 0.3s var(--ease),
+    transform 0.3s var(--ease),
+    box-shadow 0.3s var(--ease),
+    opacity 0.3s var(--ease),
+    width 0.35s var(--ease),
+    height 0.35s var(--ease),
+    margin 0.35s var(--ease);
+}
+.nav-circle-item.active .nav-dot {
+  background: var(--accent);
+  transform: scale(1.35);
+  box-shadow: 0 0 10px rgba(154, 176, 154, 0.55);
+  animation: navDotBreathe 5s ease-in-out infinite;
+}
+@keyframes navDotBreathe {
+  0%, 100% {
+    transform: scale(1.3);
+    box-shadow: 0 0 8px rgba(154, 176, 154, 0.45);
+  }
+  50% {
+    transform: scale(1.55);
+    box-shadow: 0 0 22px rgba(154, 176, 154, 0.95);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-circle-item.active .nav-dot { animation: none; }
+}
+
+/* The label slides + fades in. max-width animates so the column visually
+   shrinks to just-dots when labels are hidden. The cascade-from-active
+   stagger (via --abs-n) is shared with the dot transforms, so dot and
+   label radiate outward together. */
+.nav-label {
+  display: inline-block;
+  overflow: hidden;
+  max-width: 240px;
+  opacity: 1;
+  transform: translateX(0);
+  transition-property: opacity, max-width, transform, margin;
+  transition-duration: 0.3s, 0.4s, 0.4s, 0.4s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-delay: calc(var(--abs-n, 0) * 0.07s);
+}
+
+/* Scrolled idle — labels collapsed away. Cascade INWARD: outermost
+   labels disappear first, active label disappears last. The dot/label gap
+   in the row-reverse layout lives on the RIGHT of the label, so
+   margin-right is what closes it. The label slides LEFT (translateX -6px)
+   as it shrinks, tucking back toward the dot. */
+.nav-circle.collapsed .nav-label {
+  opacity: 0;
+  max-width: 0;
+  transform: translateX(-6px);
+  margin-right: -16px;
+  transition-delay: calc(var(--inv-abs-n, 0) * 0.07s);
+}
+
+/* Welcome — labels visible. Open with a 0.4s base delay so they appear
+   AFTER the pill has dissolved and the gap has spread on the reverse
+   transition, then cascade from active outward. */
+.nav-circle.at-top .nav-label {
+  transition-delay: calc(0.4s + var(--abs-n, 0) * 0.07s);
+}
+
+/* Close button — only renders inside the mobile expanded pill. Hidden
+   everywhere else (desktop has hover-proximity collapse instead). */
+.nav-close {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  /* On mobile the nav is a small dark-glass circle in the top-right with
+     a sage dot in the middle. Tap to expand into the full menu (dots +
+     labels). Desktop's hover-proximity is a no-op on touch screens, so
+     .expanded is the only way for phone users to open it. */
+  .nav-circle,
+  .nav-circle.at-top {
+    top: 16px;
+    left: auto;
+    right: 16px;
+    transform: none;
+    /* Mobile pill is right-anchored; dots line up against the pill's right
+       edge with labels extending leftward inside the pill. */
+    align-items: flex-end;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    gap: 0;
+    background: rgba(12, 12, 13, 0.45);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    backdrop-filter: blur(20px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    box-shadow:
+      0 6px 20px rgba(0, 0, 0, 0.5),
+      0 0 24px rgba(154, 176, 154, 0.12);
+    cursor: none;
+    overflow: hidden;
+    transition:
+      width 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+      height 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+      border-radius 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+      padding 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+      gap 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  /* Collapsed state: hide all rows; show a single sage dot in the center
+     via pseudo-element. The dot inherits the same breathing animation. */
+  .nav-circle:not(.expanded) .nav-circle-item {
+    display: none;
+  }
+  .nav-circle:not(.expanded)::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 14px rgba(154, 176, 154, 0.7);
+    animation: navDotBreathe 5s ease-in-out infinite;
+  }
+
+  /* Expanded — open into the full menu. Roomier than before so labels and
+     dots have breathing space and tap targets are large. */
+  .nav-circle.expanded,
+  .nav-circle.at-top.expanded {
+    width: auto;
+    height: auto;
+    min-width: 220px;
+    padding: 22px 26px 24px;
+    gap: 18px;
+    border-radius: 28px;
+  }
+  .nav-circle.expanded .nav-circle-item {
+    display: flex;
+    /* Pill is right-anchored: keep label-left / dot-right so all dots
+       align against the pill's right edge regardless of label length. */
+    flex-direction: row-reverse;
+  }
+  .nav-circle.expanded .nav-label,
+  .nav-circle.at-top.expanded .nav-label {
+    opacity: 1;
+    max-width: 220px;
+    transform: translateX(0);
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* Close button — visible only inside the expanded pill. Sits at the
+     top-right corner with a generous tap target. */
+  .nav-circle.expanded .nav-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-end;
+    width: 36px;
+    height: 36px;
+    margin: -8px -10px 4px 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s var(--ease), transform 0.2s var(--ease);
+  }
+  .nav-circle.expanded .nav-close:hover,
+  .nav-circle.expanded .nav-close:active {
+    color: rgba(255, 255, 255, 0.95);
+    transform: scale(1.1);
+  }
+}
+
+/* =====================================================
+   CURSOR — simple sage arrow, tracks the mouse 1:1
+   ===================================================== */
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: none; }
+  a, button, .gallery-nav, .nav-circle-item, .gallery img { cursor: none; }
+}
+
+#cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  z-index: 1000;
+  transform: translate3d(-100px, -100px, 0);
+  opacity: 0;
+  /* Tilted arrow shape — apex at top-left, where the actual mouse sits */
+  clip-path: polygon(0% 0%, 100% 38%, 56% 56%, 38% 100%);
+  background: var(--accent);
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.55));
+  /* Snappy size change on hover; no bouncy easing, no transform transition. */
+  transition: width 0.12s ease-out, height 0.12s ease-out, opacity 0.18s ease;
+}
+
+#cursor.visible { opacity: 1; }
+#cursor.hover { width: 28px; height: 28px; }
+#cursor.click { width: 18px; height: 18px; }
+
+@media (hover: none), (pointer: coarse) {
+  #cursor { display: none; }
+}
+
+/* =====================================================
+   CLICK RING — single sage halo emanates from click point.
+   JS spawns one .click-ring div at (clientX, clientY) on every
+   mousedown and removes it after the animation. Pure visual feedback;
+   never blocks input (pointer-events: none).
+   ===================================================== */
+.click-ring {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+  margin-top: -9px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(154, 176, 154, 0.7);
+  background: radial-gradient(circle, rgba(154, 176, 154, 0.18) 0%, rgba(154, 176, 154, 0) 70%);
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.9;
+  transform: translate3d(0, 0, 0) scale(0.4);
+  animation: clickRingExpand 520ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  will-change: transform, opacity;
+}
+@keyframes clickRingExpand {
+  0%   { opacity: 0.9; transform: translate3d(var(--cx), var(--cy), 0) scale(0.4); }
+  100% { opacity: 0;   transform: translate3d(var(--cx), var(--cy), 0) scale(4.2); }
+}
+@media (hover: none), (pointer: coarse) {
+  .click-ring { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .click-ring { display: none; }
+}
+
+
+/* =====================================================
+   HERO
+   ===================================================== */
+.hero {
+  padding: 80px 0 32px;
+}
+@media (max-width: 720px) {
+  .hero { padding: 56px 0 24px; }
+}
+.hero-main {
+  display: block;
+}
+
+/* About section headshot — natural aspect ratio, accent line flush along the
+   bottom edge of the image. */
+.about-image {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+}
+.about-image img {
+  width: 180px;
+  height: auto;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--accent);
+  display: block;
+}
+@media (max-width: 820px) {
+  .about-image img { width: 140px; }
+}
+
+.hero-name {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+}
+
+.hero-role {
+  font-size: 1.25rem;
+  color: var(--accent);
+  margin: 0 0 32px;
+  font-weight: 500;
+}
+
+@keyframes heroRise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes nameShimmer {
+  from { background-position: 100% 0; }
+  to   { background-position: 0% 0; }
+}
+.hero-name,
+.hero-role,
+.hero-bio,
+.nav-circle {
+  opacity: 0;
+  animation: heroRise 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+.hero-name {
+  background-image: linear-gradient(
+    100deg,
+    var(--text) 35%,
+    #ffffff 50%,
+    var(--text) 65%
+  );
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation:
+    heroRise 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) 0.1s forwards,
+    nameShimmer 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) 1.2s forwards;
+}
+.hero-role   { animation-delay: 0.22s; }
+.hero-bio    { animation-delay: 0.34s; }
+.nav-circle  { animation-delay: 0.46s; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-name, .hero-role, .hero-bio, .nav-circle {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+.hero-bio {
+  max-width: 620px;
+  font-size: 1.0625rem;
+  color: var(--text);
+  margin: 0 0 36px;
+  line-height: 1.65;
+}
+
+.hero-bio + .hero-bio {
+  margin-top: 1em;
+  margin-bottom: 36px;
+}
+
+/* Specialty list under the hero tagline */
+.hero-skills {
+  max-width: 620px;
+  margin: 0 0 36px;
+  opacity: 0;
+  animation: heroRise 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s forwards;
+}
+.hero-skills li {
+  font-size: 1.0625rem;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-skills { opacity: 1; animation: none; }
+}
+
+/* =====================================================
+   PROJECTS
+   ===================================================== */
+.projects {
+  padding: 0;
+}
+.project {
+  padding: 72px 0 100px;
+}
+@media (max-width: 720px) {
+  .project { padding: 48px 0 64px; }
+}
+
+.project-header {
+  margin-bottom: 32px;
+  max-width: var(--container-narrow);
+}
+.project-studio {
+  font-size: 0.78rem;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+.project-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0 0 12px;
+}
+.project-meta {
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Description on the left, engine on the right */
+.project-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+  margin-bottom: 48px;
+}
+.project-intro .project-body {
+  margin-bottom: 0;
+  max-width: none;
+}
+.project-intro .project-meta {
+  align-self: start;
+  text-align: right;
+}
+@media (max-width: 720px) {
+  .project-intro {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .project-intro .project-meta { text-align: left; }
+}
+/* Video — embedded YouTube player; play button covers it until clicked */
+.project-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 48px;
+  border-radius: 22px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.project-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  z-index: 1;
+}
+.project-video .video-play {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: none;
+  background-color: var(--surface);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  border-radius: inherit;
+}
+.project-video .play-icon {
+  width: 88px;
+  height: 88px;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.55));
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.project-video .video-play:hover .play-icon {
+  transform: scale(1.08);
+}
+
+/* Body copy */
+.project-body {
+  max-width: var(--container-narrow);
+  margin-bottom: 48px;
+}
+.project-body p {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--text);
+  margin: 0 0 16px;
+}
+.project-body p:last-child { margin-bottom: 0; }
+
+/* Two columns: contributions / extras */
+.project-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  margin-bottom: 56px;
+}
+@media (max-width: 720px) {
+  .project-columns { grid-template-columns: 1fr; gap: 40px; }
+}
+
+.section-label {
+  font-size: 1.0625rem;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin: 0 0 20px;
+}
+.section-label.spaced { margin-top: 36px; }
+
+.contributions, .plain-list, .tag-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.contributions li {
+  position: relative;
+  padding-left: 22px;
+  margin-bottom: 10px;
+  line-height: 1.55;
+  color: var(--text);
+}
+.contributions li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 12px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.plain-list li {
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+/* Vertical link list — arrow + link with accent hover */
+.link-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.link-list li {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+.link-list a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.2s var(--ease);
+}
+.link-list a:hover { color: var(--accent); }
+.link-list .arrow {
+  color: var(--accent);
+  flex-shrink: 0;
+  transition: transform 0.25s var(--ease);
+}
+.link-list a:hover .arrow {
+  transform: translateX(3px);
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.tag-list li {
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+
+/* Ratings (Eriksholm Steam/PS5 screenshots) */
+.ratings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+
+.rating-card {
+  position: relative;
+  display: inline-block;
+  border-radius: 14px;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow:
+    0 6px 22px rgba(0, 0, 0, 0.45),
+    0 2px 6px rgba(0, 0, 0, 0.25);
+}
+.rating-card img {
+  display: block;
+  max-height: 96px;
+  width: auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* Awards (transparent PNGs — white card backdrop so they pop) */
+.awards-label {
+  text-align: center;
+  margin: 16px 0 24px;
+}
+.awards-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin: 0 0 56px;
+}
+.awards-row img {
+  flex: 1 1 200px;
+  max-width: 280px;
+  height: 160px;
+  width: 100%;
+  object-fit: contain;
+  background: none;
+}
+@media (max-width: 720px) {
+  .awards-row { gap: 16px; }
+  .awards-row img { height: 130px; }
+}
+
+/* =====================================================
+   SCROLL-IN REVEAL
+   ===================================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Gameplay GIF — autoplaying loop card */
+.project-gif {
+  position: relative;
+  margin: 0 0 32px;
+  border-radius: 22px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.project-gif img,
+.project-gif video {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 70vh;
+  object-fit: cover;
+  pointer-events: none;
+}
+.project-gif video::-webkit-media-controls,
+.project-gif video::-webkit-media-controls-enclosure,
+.project-gif video::-webkit-media-controls-panel,
+.project-gif video::-webkit-media-controls-play-button,
+.project-gif video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none !important;
+}
+@media (max-width: 720px) {
+  .project-gif img,
+  .project-gif video {
+    max-height: 50vh;
+  }
+}
+
+/* Gallery — single-image carousel */
+.gallery-wrapper {
+  position: relative;
+  margin-bottom: 0;
+  border-radius: 22px;
+  isolation: isolate;
+}
+.gallery {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  border-radius: 22px;
+}
+.gallery::-webkit-scrollbar { display: none; }
+.gallery img {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 22px;
+  cursor: none;
+  background: var(--surface);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.gallery.dragging,
+.gallery.dragging img { cursor: none; }
+
+
+/* Carousel chevrons — sit OUTSIDE the gallery on either side. */
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-size: 5.5rem;
+  line-height: 1;
+  font-weight: 300;
+  color: var(--text-muted);
+  cursor: none;
+  will-change: transform;
+  transition:
+    color 0.2s var(--ease),
+    transform 0.2s var(--ease),
+    opacity 0.2s var(--ease);
+}
+/* Invisible hit-area extension: prevents the scale(1.15) hover from
+   pushing the cursor outside the element's bounds and causing jitter. */
+.gallery-nav::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+}
+.gallery-nav:hover:not(:disabled) {
+  color: var(--text);
+  transform: translateY(-50%) scale(1.15);
+}
+.gallery-nav:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+.gallery-prev { left: -52px; }
+.gallery-next { right: -52px; }
+@media (max-width: 720px) {
+  /* No room outside the gallery on narrow screens — pull arrows back in. */
+  .gallery-prev { left: 4px; }
+  .gallery-next { right: 4px; }
+  .gallery-nav { font-size: 3.25rem; color: var(--text); }
+}
+
+/* Counter sits BELOW the gallery as plain text — no overlay.
+   Carries the bottom margin that the wrapper used to own. */
+.gallery-counter {
+  margin: 14px 0 56px;
+  text-align: center;
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+/* Reviews */
+.reviews {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 56px;
+  max-width: 880px;
+}
+.reviews blockquote {
+  margin: 0;
+  padding: 24px 28px;
+  background: var(--surface);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--radius);
+}
+.reviews blockquote p {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--text);
+}
+.reviews blockquote footer {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.reviews .score {
+  color: var(--accent);
+  font-weight: 600;
+  background: var(--accent-soft);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+/* External links row */
+.project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+}
+.project-links a {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.project-links a:hover { color: var(--accent); }
+.project-links .arrow {
+  color: var(--accent);
+  transition: transform 0.25s var(--ease);
+}
+.project-links a:hover .arrow {
+  transform: translateX(3px);
+}
+
+/* =====================================================
+   ABOUT
+   ===================================================== */
+.about {
+  padding: 120px 0;
+}
+@media (max-width: 720px) {
+  .about { padding: 64px 0; }
+}
+.about-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 80px;
+}
+@media (max-width: 820px) {
+  .about-grid { grid-template-columns: 1fr; gap: 32px; }
+}
+.about-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.about-body p {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Contact stack under the headshot — left-aligned items in a centered column
+   so the arrows line up vertically across all three links. */
+.about-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-start;
+  width: max-content;
+  margin: 36px auto 0;
+}
+.about-contact a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.005em;
+  transition: color 0.2s var(--ease);
+}
+.about-contact a:hover { color: var(--accent); }
+.about-contact a.copied { color: var(--accent); }
+.about-contact .arrow {
+  color: var(--accent);
+  flex-shrink: 0;
+  transition: transform 0.25s var(--ease);
+}
+.about-contact a:hover .arrow {
+  transform: translateX(3px);
+}
+@media (max-width: 820px) {
+  .about-contact { margin: 32px 0 0; }
+}
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+.footer {
+  padding: 32px 0;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.875rem;
+}
+
+/* =====================================================
+   GRACEFUL IMAGE FALLBACK
+   ===================================================== */
+img {
+  background: linear-gradient(135deg, #1a1a1d 0%, #232327 100%);
+}
+
+/* =====================================================
+   SAGE BACKLIGHT on enlargeable media
+   - Base: a soft sage glow always lit, with a very slow, subtle pulse
+     so the cards feel like they're breathing.
+   - Hover: glow swells gently over a long transition — never pops on/off.
+   - Zoom-target: glow grows further while the image emerges, then
+     fades back smoothly when the zoom closes.
+
+   Three @property variables compose into the box-shadow:
+     --media-pulse  oscillates 0→1→0 via @keyframes (the breath)
+     --media-hover  transitions 0→1 on hover (the swell)
+     --media-zoom   transitions 0→1 while .is-zooming-target is applied
+   Each variable adds onto the same three-layer shape, so the glow
+   grows/shrinks coherently — no layer-count mismatch, no sudden jumps.
+   ===================================================== */
+@property --media-pulse {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+@property --media-hover {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+@property --media-zoom {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+.project-gif,
+.gallery-wrapper,
+.project-video {
+  --media-pulse: 0;
+  --media-hover: 0;
+  --media-zoom: 0;
+  box-shadow:
+    /* Outer halo — wide and faint, gives a long, smooth falloff
+       so the glow blends into the page background rather than
+       cutting off abruptly at the card's edge. */
+    0 0
+      calc(210px + 40px * var(--media-pulse) + 60px * var(--media-hover) + 30px * var(--media-zoom))
+      rgba(154, 176, 154,
+        calc(0.10 + 0.03 * var(--media-pulse) + 0.06 * var(--media-hover) + 0.05 * var(--media-zoom))),
+    /* Mid ambient — the main visible glow; this is what pulses. */
+    0 0
+      calc(115px + 25px * var(--media-pulse) + 60px * var(--media-hover) + 50px * var(--media-zoom))
+      rgba(154, 176, 154,
+        calc(0.22 + 0.06 * var(--media-pulse) + 0.13 * var(--media-hover) + 0.12 * var(--media-zoom))),
+    /* Tight inner accent — fades in on hover or during zoom. */
+    0 0
+      calc(0px + 30px * var(--media-hover) + 50px * var(--media-zoom))
+      rgba(154, 176, 154,
+        calc(0.12 * var(--media-hover) + 0.18 * var(--media-zoom)));
+  animation: mediaGlowPulse 7s ease-in-out infinite;
+  transition:
+    --media-hover 3.2s cubic-bezier(0.22, 0.61, 0.36, 1),
+    --media-zoom 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+@keyframes mediaGlowPulse {
+  0%, 100% { --media-pulse: 0; }
+  50%      { --media-pulse: 1; }
+}
+.project-gif:hover,
+.gallery-wrapper:hover,
+.project-video:hover {
+  --media-hover: 1;
+}
+
+/* JS adds .is-zooming-target to whichever element is being zoomed.
+   The --media-zoom variable transitions on the same 550ms curve as the
+   zoom transform, so the glow grows and shrinks in lockstep with the
+   image scale. Removing the class simply transitions --media-zoom back
+   to 0 — no separate exit logic needed. */
+.is-zooming-target {
+  --media-zoom: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-gif,
+  .gallery-wrapper,
+  .project-video {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
