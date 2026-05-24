@@ -116,8 +116,8 @@ a:hover { color: var(--accent); }
    "labels appear, dots disappear" swap that snapped between two layouts).
 
    States:
-   - .at-top         (welcome page)   → labels visible, dots hidden
-   - .collapsed      (scrolled idle)  → dots visible, labels hidden
+   - .at-top         (welcome page)   → glass pill + labels visible
+   - .collapsed      (scrolled idle)  → glass pill, labels collapsed to dots
    - default scrolled (hover/proximity) → dots + labels both visible
    ===================================================== */
 /* One layout, one position. The nav is a dark liquid-glass pill anchored
@@ -126,16 +126,12 @@ a:hover { color: var(--accent); }
    always row-reverse (label LEFT of dot) so the dots stay lined up against
    the pill's right edge regardless of label visibility.
 
-   .at-top is the welcome variant — same pill geometry, same row direction,
-   just transparent (no glass) and with auto-visible labels and a wider
-   row gap so the welcome page reads as airy text rather than a UI chip.
-
-   The forward/reverse cascade between the two states is handled entirely
-   by CSS via direction-aware transition delays:
-     Forward (welcome → scrolled, .at-top removed):
-       Labels collapse immediately, glass/gap change after 0.4s.
-     Reverse (scrolled → welcome, .at-top added):
-       Glass/gap change immediately, labels open after 0.4s. */
+   The glass pill is present in every state, welcome included, so the
+   container never changes shape between welcome and scrolled — the only
+   thing that animates is the labels collapsing to dots (and back). That
+   keeps the transition clean and quick: no glass fading in, just the
+   labels retracting inside the pill that's already there. .at-top differs
+   from scrolled only in that its labels are auto-visible. */
 .nav-circle {
   position: fixed;
   /* Aligned with the top of the gameplay video on a project page (JS
@@ -160,32 +156,9 @@ a:hover { color: var(--accent); }
   box-shadow:
     0 6px 22px rgba(0, 0, 0, 0.5),
     0 0 28px rgba(154, 176, 154, 0.12);
-  /* Default-state transitions (apply when LEAVING .at-top, i.e. forward
-     direction). Glass + gap have a 0.4s delay so they wait until labels
-     have closed before snapping into the pill. */
-  transition:
-    gap 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.4s,
-    padding 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s,
-    background 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s,
-    border-color 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s,
-    box-shadow 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s,
-    -webkit-backdrop-filter 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s,
-    backdrop-filter 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s;
-}
-
-.nav-circle.at-top {
-  /* Welcome variant — same position, transparent. Wider gap because labels
-     are auto-visible and the column needs breathing room without the pill
-     to contain it. */
-  gap: 18px;
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  /* At-top transitions (apply when ENTERING .at-top, i.e. reverse). Glass
-     and gap snap immediately so the pill dissolves while labels are still
-     hidden; labels open afterward via their own delayed rule below. */
+  /* The glass is constant across welcome/scrolled, so these never actually
+     fire on that transition — they're kept short and delay-free only so any
+     incidental restyle fades cleanly instead of snapping. */
   transition:
     gap 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     padding 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
@@ -205,7 +178,7 @@ a:hover { color: var(--accent); }
   gap: 16px;
   padding: 0;
   color: var(--text-muted);
-  font-size: 1.0625rem;
+  font-size: 1.25rem;
   font-weight: 500;
   letter-spacing: 0.01em;
   text-decoration: none;
@@ -222,14 +195,6 @@ a:hover { color: var(--accent); }
 }
 .nav-circle-item:hover { color: var(--text); }
 .nav-circle-item.active { color: var(--text); }
-
-/* Hover-expanded scrolled state: spread items vertically AROUND the active
-   row. Active stays at translateY(0); rows above slide up by N*8px,
-   rows below slide down by N*8px. Combined with the cascade-from-active
-   stagger above, this radiates outward in time as well as space. */
-.nav-circle:not(.at-top):not(.collapsed) .nav-circle-item {
-  --shift-y: calc(var(--n, 0) * 8px);
-}
 
 /* Collapsing direction: when the destination is .collapsed, run the
    cascade INWARD — outermost rows tuck back first, active last. */
@@ -302,19 +267,6 @@ a:hover { color: var(--accent); }
   transition-delay: calc(var(--inv-abs-n, 0) * 0.07s);
 }
 
-/* Welcome — labels visible. Open with a 0.4s base delay so they appear
-   AFTER the pill has dissolved and the gap has spread on the reverse
-   transition, then cascade from active outward. */
-.nav-circle.at-top .nav-label {
-  transition-delay: calc(0.4s + var(--abs-n, 0) * 0.07s);
-}
-
-/* Close button — only renders inside the mobile expanded pill. Hidden
-   everywhere else (desktop has hover-proximity collapse instead). */
-.nav-close {
-  display: none;
-}
-
 @media (max-width: 720px) {
   /* On mobile the nav is a small dark-glass circle in the top-right with
      a sage dot in the middle. Tap to expand into the full menu (dots +
@@ -322,15 +274,15 @@ a:hover { color: var(--accent); }
      .expanded is the only way for phone users to open it. */
   .nav-circle,
   .nav-circle.at-top {
-    top: 16px;
+    top: 52px;
     left: auto;
     right: 16px;
     transform: none;
     /* Mobile pill is right-anchored; dots line up against the pill's right
        edge with labels extending leftward inside the pill. */
     align-items: flex-end;
-    width: 52px;
-    height: 52px;
+    width: 78px;
+    height: 78px;
     padding: 0;
     gap: 0;
     background: rgba(12, 12, 13, 0.45);
@@ -360,8 +312,8 @@ a:hover { color: var(--accent); }
     position: absolute;
     inset: 0;
     margin: auto;
-    width: 12px;
-    height: 12px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     background: var(--accent);
     box-shadow: 0 0 14px rgba(154, 176, 154, 0.7);
@@ -372,18 +324,20 @@ a:hover { color: var(--accent); }
      dots have breathing space and tap targets are large. */
   .nav-circle.expanded,
   .nav-circle.at-top.expanded {
-    width: auto;
+    width: 220px;
     height: auto;
-    min-width: 220px;
     padding: 22px 26px 24px;
     gap: 18px;
     border-radius: 28px;
+    align-items: stretch;
   }
   .nav-circle.expanded .nav-circle-item {
     display: flex;
     /* Pill is right-anchored: keep label-left / dot-right so all dots
        align against the pill's right edge regardless of label length. */
     flex-direction: row-reverse;
+    font-size: 1.25rem;
+    --shift-y: 0px;
   }
   .nav-circle.expanded .nav-label,
   .nav-circle.at-top.expanded .nav-label {
@@ -394,31 +348,6 @@ a:hover { color: var(--accent); }
     margin-right: 0;
   }
 
-  /* Close button — visible only inside the expanded pill. Sits at the
-     top-right corner with a generous tap target. */
-  .nav-circle.expanded .nav-close {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    align-self: flex-end;
-    width: 36px;
-    height: 36px;
-    margin: -8px -10px 4px 0;
-    padding: 0;
-    background: transparent;
-    border: 0;
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 30px;
-    font-weight: 300;
-    line-height: 1;
-    cursor: pointer;
-    transition: color 0.2s var(--ease), transform 0.2s var(--ease);
-  }
-  .nav-circle.expanded .nav-close:hover,
-  .nav-circle.expanded .nav-close:active {
-    color: rgba(255, 255, 255, 0.95);
-    transform: scale(1.1);
-  }
 }
 
 /* =====================================================
@@ -874,8 +803,16 @@ a:hover { color: var(--accent); }
   background: none;
 }
 @media (max-width: 720px) {
-  .awards-row { gap: 16px; }
-  .awards-row img { height: 130px; }
+  .awards-row {
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+  .awards-row img {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: none;
+    height: 110px;
+  }
 }
 
 /* =====================================================
@@ -911,9 +848,8 @@ a:hover { color: var(--accent); }
 .project-gif img,
 .project-gif video {
   width: 100%;
-  height: auto;
+  aspect-ratio: 16 / 9;
   display: block;
-  max-height: 70vh;
   object-fit: cover;
   pointer-events: none;
 }
@@ -1142,7 +1078,20 @@ a:hover { color: var(--accent); }
   transform: translateX(3px);
 }
 @media (max-width: 820px) {
-  .about-contact { margin: 32px 0 0; }
+  .about-side {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+  }
+  .about-image {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+  .about-contact {
+    margin: 0;
+    width: auto;
+  }
 }
 
 /* =====================================================
@@ -1206,17 +1155,17 @@ img {
     0 0
       calc(210px + 40px * var(--media-pulse) + 60px * var(--media-hover) + 30px * var(--media-zoom))
       rgba(154, 176, 154,
-        calc(0.10 + 0.03 * var(--media-pulse) + 0.06 * var(--media-hover) + 0.05 * var(--media-zoom))),
+        calc(0.05 + 0.015 * var(--media-pulse) + 0.03 * var(--media-hover) + 0.025 * var(--media-zoom))),
     /* Mid ambient — the main visible glow; this is what pulses. */
     0 0
       calc(115px + 25px * var(--media-pulse) + 60px * var(--media-hover) + 50px * var(--media-zoom))
       rgba(154, 176, 154,
-        calc(0.22 + 0.06 * var(--media-pulse) + 0.13 * var(--media-hover) + 0.12 * var(--media-zoom))),
+        calc(0.11 + 0.03 * var(--media-pulse) + 0.065 * var(--media-hover) + 0.06 * var(--media-zoom))),
     /* Tight inner accent — fades in on hover or during zoom. */
     0 0
       calc(0px + 30px * var(--media-hover) + 50px * var(--media-zoom))
       rgba(154, 176, 154,
-        calc(0.12 * var(--media-hover) + 0.18 * var(--media-zoom)));
+        calc(0.06 * var(--media-hover) + 0.09 * var(--media-zoom)));
   animation: mediaGlowPulse 7s ease-in-out infinite;
   transition:
     --media-hover 3.2s cubic-bezier(0.22, 0.61, 0.36, 1),

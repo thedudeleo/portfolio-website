@@ -42,10 +42,7 @@
   <!-- Nav circle — each item is [dot] + [label]. Dots stay put across all
        states; labels fade in/out so transitions feel coherent. -->
   <aside id="nav-circle" class="nav-circle at-top" aria-label="Section navigation">
-    <!-- Close button only renders inside the mobile expanded pill (CSS-gated).
-         On desktop the menu auto-collapses by proximity so this is dead UI. -->
-    <button class="nav-close" type="button" aria-label="Close menu">×</button>
-    <a class="nav-circle-item active" href="#top"       data-section="top"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">Welcome</span></a>
+<a class="nav-circle-item active" href="#top"       data-section="top"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">Welcome</span></a>
     <a class="nav-circle-item"        href="#eriksholm" data-section="eriksholm"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">Eriksholm</span></a>
     <a class="nav-circle-item"        href="#releap"    data-section="releap"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">ReLeap</span></a>
     <a class="nav-circle-item"        href="#provincia" data-section="provincia"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">Provincia</span></a>
@@ -345,7 +342,7 @@
     <!-- ABOUT -->
     <section class="about" id="about">
       <div class="container about-grid">
-        <div>
+        <div class="about-side">
           <div class="about-image">
             <img src="assets/leoheadshot.png" alt="Léo Félix Smith" />
           </div>
@@ -357,7 +354,7 @@
         </div>
         <div class="about-body">
           <p>
-            Game design sits at the intersection of technical, psychological, and creative thinking. I find that endlessly interesting.
+            Game design makes you think about systems, people, and technical implementation all at once. It's a creative challenge I never get tired of.
           </p>
 
           <h3 class="section-label spaced">What matters to me</h3>
@@ -385,7 +382,7 @@
           <ul class="tag-list">
             <li>🧗🏻 climbing</li>
             <li>🎹 producing music</li>
-            <li>🌳 spending time in nature</li>
+            <li>🐕 walks with my dog</li>
             <li>🎲 board game nights with friends</li>
           </ul>
         </div>

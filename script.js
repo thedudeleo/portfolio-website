@@ -692,11 +692,14 @@
 
   // Keep the nav's top aligned with .hero-bio regardless of font/layout.
   // offsetTop chain is layout-based (unaffected by CSS animation transforms).
-  const heroBio = document.querySelector('.hero-bio');
+  const heroBio  = document.querySelector('.hero-bio');
+  const heroName = document.querySelector('.hero-name');
   function alignNavWithBio() {
-    if (!heroBio) return;
+    const isMobile = window.innerWidth <= 720;
+    const target = isMobile ? heroName : heroBio;
+    if (!target) return;
     let top = 0;
-    let el = heroBio;
+    let el = target;
     while (el && el !== document.body) {
       top += el.offsetTop;
       el = el.offsetParent;
@@ -807,12 +810,7 @@
   const mobileMQ = window.matchMedia('(max-width: 720px)');
   function onNavClick(e) {
     if (!mobileMQ.matches) return;
-    // Explicit close button — always dismisses, doesn't toggle.
-    if (e.target.closest('.nav-close')) {
-      nav.classList.remove('expanded');
-      return;
-    }
-    const link = e.target.closest('.nav-circle-item');
+const link = e.target.closest('.nav-circle-item');
     if (link) {
       // Picked a section — close the menu so the user sees the page.
       nav.classList.remove('expanded');
@@ -854,14 +852,11 @@
       : window.innerHeight + margin;
     return sectionTop < threshold;
   }
-  // Welcome ↔ scrolled transition is purely class-toggle now: the nav lives
-  // in the same position in both states (a dark glass pill at the content's
-  // right margin), and the cascade between them is handled by direction-
-  // aware CSS transition delays:
-  //   Forward (.at-top removed): labels close immediately; glass + gap
-  //     change after 0.4s, so the user sees labels-close → pill-appear.
-  //   Reverse (.at-top added)  : glass + gap change immediately; labels
-  //     open after 0.4s, so the user sees pill-dissolve → labels-open.
+  // Welcome ↔ scrolled transition is purely class-toggle: the nav lives in
+  // the same position in both states and the glass pill is always present,
+  // so the only thing that animates is the labels. Forward (.at-top removed,
+  // .collapsed added) the labels retract to dots; reverse they cascade back
+  // open — the pill never fades or changes shape.
   function onScroll () {
     const want = shouldCollapse();
     const isAtTop = nav.classList.contains('at-top');
