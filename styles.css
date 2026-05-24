@@ -35,6 +35,16 @@ html {
      the user is on the page, so the scrollbar's positional cue is not
      missed. */
   scrollbar-width: none;          /* Firefox */
+  /* Grain lives on the root (not body) so it paints the canvas — including
+     the iOS/macOS rubber-band overscroll area — instead of leaving bare
+     near-black there. NOTE: do NOT put overflow on html — any overflow value
+     on the root stops WebKit painting this background into the overscroll
+     gutter, which is the whole point of having it here. Horizontal-overflow
+     clipping is done on body instead. Body is also transformed during the
+     page-zoom, so keeping the texture on html means it stays put. */
+  background-color: var(--bg);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
 }
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
@@ -78,9 +88,10 @@ body.is-zoomed .zoom-fade-down {
 
 body {
   margin: 0;
-  background-color: var(--bg);
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
+  /* Safety net against horizontal scroll (e.g. the gallery arrows' hit-area
+     overhang). Lives on body, not html, so the root's overscroll texture is
+     untouched. */
+  overflow-x: hidden;
   color: var(--text);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -103,6 +114,16 @@ a:hover { color: var(--accent); }
   margin: 0 auto;
   padding: 0 24px;
 }
+/* Gallery prev/next arrows live in the gutter OUTSIDE the content column
+   (left/right: -52px). They stay outside down to 720px — the point where the
+   nav pill becomes the nav circle and the arrows move inside the image. But
+   between 721px and ~1180px the default 24px gutter is too thin for the arrows
+   to fit without spilling off-screen, so widen every container's side padding
+   across that range. This shifts the whole site's alignment inward there (by
+   design) so the outside arrows have room and never cause horizontal scroll. */
+@media (min-width: 721px) and (max-width: 1180px) {
+  .container { padding: 0 64px; }
+}
 
 .muted { color: var(--text-muted); font-weight: 400; }
 .small { font-size: 0.875rem; }
@@ -116,7 +137,7 @@ a:hover { color: var(--accent); }
    "labels appear, dots disappear" swap that snapped between two layouts).
 
    States:
-   - .at-top         (welcome page)   → glass pill + labels visible
+   - .at-top         (welcome page)   → transparent (no glass), labels visible
    - .collapsed      (scrolled idle)  → glass pill, labels collapsed to dots
    - default scrolled (hover/proximity) → dots + labels both visible
    ===================================================== */
@@ -126,12 +147,16 @@ a:hover { color: var(--accent); }
    always row-reverse (label LEFT of dot) so the dots stay lined up against
    the pill's right edge regardless of label visibility.
 
-   The glass pill is present in every state, welcome included, so the
-   container never changes shape between welcome and scrolled — the only
-   thing that animates is the labels collapsing to dots (and back). That
-   keeps the transition clean and quick: no glass fading in, just the
-   labels retracting inside the pill that's already there. .at-top differs
-   from scrolled only in that its labels are auto-visible. */
+   .at-top is the welcome variant — same geometry, but transparent (no
+   glass) with auto-visible labels, so the welcome page reads as airy text
+   rather than a UI chip.
+
+   Welcome → scrolled (forward): the labels retract with their normal
+   cascade; the glass fade-in is delayed until that cascade finishes, so the
+   pill only appears once it's already at its final dot-size — you never see
+   it closing.
+   Scrolled → welcome (reverse): the glass fades straight out, then the
+   labels open afterward as transparent airy text (no box to see open). */
 .nav-circle {
   position: fixed;
   /* Aligned with the top of the gameplay video on a project page (JS
@@ -149,24 +174,49 @@ a:hover { color: var(--accent); }
   gap: 10px;
   padding: 14px 18px;
   background: rgba(12, 12, 13, 0.55);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  backdrop-filter: blur(12px) saturate(1.4);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
   box-shadow:
     0 6px 22px rgba(0, 0, 0, 0.5),
     0 0 28px rgba(154, 176, 154, 0.12);
-  /* The glass is constant across welcome/scrolled, so these never actually
-     fire on that transition — they're kept short and delay-free only so any
-     incidental restyle fades cleanly instead of snapping. */
+  /* Forward transition (leaving .at-top → scrolled): the labels first retract
+     with their normal cascade (~0.68s, see .collapsed .nav-label), then the
+     glass fades in. The 0.68s delay holds the glass back until the pill is
+     already at its final dot-size, so it appears already-collapsed with no
+     closing motion. The backdrop blur is NOT animated (animating it re-blurs
+     the region behind the pill every frame — the most expensive thing the nav
+     can do): it snaps on with 0s duration, but on the same 0.68s delay so the
+     blurred box doesn't appear and shrink during the cascade. */
   transition:
     gap 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     padding 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
-    background 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
-    border-color 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
-    box-shadow 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
-    -webkit-backdrop-filter 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
-    backdrop-filter 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+    background 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) 0.68s,
+    border-color 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) 0.68s,
+    box-shadow 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) 0.68s,
+    -webkit-backdrop-filter 0s linear 0.68s,
+    backdrop-filter 0s linear 0.68s;
+}
+
+.nav-circle.at-top {
+  /* Welcome variant — transparent, no glass. Same geometry/position as the
+     scrolled pill so only the glass (and labels) change between states. */
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  /* Reverse transition (entering .at-top): the glass dissolves immediately
+     so the pill is gone before the labels reopen below it. backdrop-filter is
+     not transitioned (see scrolled state) — the blur drops instantly while the
+     background fades out. */
+  transition:
+    gap 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+    background 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+    border-color 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .nav-circle-item {
@@ -267,6 +317,13 @@ a:hover { color: var(--accent); }
   transition-delay: calc(var(--inv-abs-n, 0) * 0.07s);
 }
 
+/* Reverse (scrolled → welcome): labels reopen AFTER the glass has dissolved
+   (0.4s base delay), then cascade from active outward, appearing as airy
+   text rather than inside a pill. */
+.nav-circle.at-top .nav-label {
+  transition-delay: calc(0.4s + var(--abs-n, 0) * 0.07s);
+}
+
 @media (max-width: 720px) {
   /* On mobile the nav is a small dark-glass circle in the top-right with
      a sage dot in the middle. Tap to expand into the full menu (dots +
@@ -286,8 +343,8 @@ a:hover { color: var(--accent); }
     padding: 0;
     gap: 0;
     background: rgba(12, 12, 13, 0.45);
-    -webkit-backdrop-filter: blur(20px) saturate(1.4);
-    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    backdrop-filter: blur(12px) saturate(1.4);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 50%;
     box-shadow:
@@ -320,16 +377,18 @@ a:hover { color: var(--accent); }
     animation: navDotBreathe 5s ease-in-out infinite;
   }
 
-  /* Expanded — open into the full menu. Roomier than before so labels and
-     dots have breathing space and tap targets are large. */
+  /* Expanded — open into the full menu. Matches the desktop pill's box
+     model: content-width (hugs the longest label, no dead space on the
+     left), flex-end alignment so dots sit against the right edge, and the
+     same 14px/18px padding + 10px gap. */
   .nav-circle.expanded,
   .nav-circle.at-top.expanded {
-    width: 220px;
+    width: fit-content;
     height: auto;
-    padding: 22px 26px 24px;
-    gap: 18px;
-    border-radius: 28px;
-    align-items: stretch;
+    padding: 14px 18px;
+    gap: 10px;
+    border-radius: 22px;
+    align-items: flex-end;
   }
   .nav-circle.expanded .nav-circle-item {
     display: flex;
@@ -372,6 +431,9 @@ a:hover { color: var(--accent); }
   clip-path: polygon(0% 0%, 100% 38%, 56% 56%, 38% 100%);
   background: var(--accent);
   filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.55));
+  /* Keep the cursor on its own compositor layer so repositioning it on every
+     mousemove is a pure GPU transform — it never repaints the page beneath. */
+  will-change: transform;
   /* Snappy size change on hover; no bouncy easing, no transform transition. */
   transition: width 0.12s ease-out, height 0.12s ease-out, opacity 0.18s ease;
 }
@@ -575,7 +637,8 @@ a:hover { color: var(--accent); }
 }
 .project-meta {
   font-family: var(--font-sans);
-  font-size: 1.0625rem;
+  /* Eyebrow scale — see .section-label. Quiet uppercase label, not body-size. */
+  font-size: 0.8rem;
   color: var(--text-muted);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -605,7 +668,11 @@ a:hover { color: var(--accent); }
     grid-template-columns: 1fr;
     gap: 16px;
   }
-  .project-intro .project-meta { text-align: left; }
+  /* Engine name moves above the description and stays right-aligned. */
+  .project-intro .project-meta {
+    order: -1;
+    text-align: right;
+  }
 }
 /* Video — embedded YouTube player; play button covers it until clicked */
 .project-video {
@@ -678,7 +745,10 @@ a:hover { color: var(--accent); }
 }
 
 .section-label {
-  font-size: 1.0625rem;
+  /* Eyebrow scale — deliberately smaller than body (1.0625rem). All-caps at
+     body size reads as heavy/shouty and flattens the hierarchy; a smaller
+     letter-spaced cap reads as a quiet label. Matches the studio eyebrow. */
+  font-size: 0.8rem;
   color: var(--text-muted);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -938,8 +1008,10 @@ a:hover { color: var(--accent); }
 }
 .gallery-prev { left: -52px; }
 .gallery-next { right: -52px; }
+/* Arrows move inside the image only at the nav-circle breakpoint (720px).
+   Above it they stay outside in the gutter, which the widened .container
+   padding (see the 721–1180px rule) keeps wide enough to fit them. */
 @media (max-width: 720px) {
-  /* No room outside the gallery on narrow screens — pull arrows back in. */
   .gallery-prev { left: 4px; }
   .gallery-next { right: 4px; }
   .gallery-nav { font-size: 3.25rem; color: var(--text); }
@@ -1113,89 +1185,31 @@ img {
 
 /* =====================================================
    SAGE BACKLIGHT on enlargeable media
-   - Base: a soft sage glow always lit, with a very slow, subtle pulse
-     so the cards feel like they're breathing.
-   - Hover: glow swells gently over a long transition — never pops on/off.
-   - Zoom-target: glow grows further while the image emerges, then
-     fades back smoothly when the zoom closes.
 
-   Three @property variables compose into the box-shadow:
-     --media-pulse  oscillates 0→1→0 via @keyframes (the breath)
-     --media-hover  transitions 0→1 on hover (the swell)
-     --media-zoom   transitions 0→1 while .is-zooming-target is applied
-   Each variable adds onto the same three-layer shape, so the glow
-   grows/shrinks coherently — no layer-count mismatch, no sudden jumps.
+   Static sage glow behind media cards. This was previously a perpetual 7s
+   box-shadow "breathing" pulse (mediaGlowPulse) composed from three @property
+   variables, with hover/zoom swells layered on. That animated a ~250px blur
+   shadow on every card every frame — even off-screen ones — which is a
+   CPU-bound paint that pegged weaker machines and starved the main thread
+   (the cause of the mouse-cursor lag). A static glow is painted once and
+   cached by the compositor, so it costs nothing per frame while keeping the
+   sage backlight look.
    ===================================================== */
-@property --media-pulse {
-  syntax: '<number>';
-  inherits: false;
-  initial-value: 0;
-}
-@property --media-hover {
-  syntax: '<number>';
-  inherits: false;
-  initial-value: 0;
-}
-@property --media-zoom {
-  syntax: '<number>';
-  inherits: false;
-  initial-value: 0;
-}
-
 .project-gif,
 .gallery-wrapper,
 .project-video {
-  --media-pulse: 0;
-  --media-hover: 0;
-  --media-zoom: 0;
   box-shadow:
-    /* Outer halo — wide and faint, gives a long, smooth falloff
-       so the glow blends into the page background rather than
-       cutting off abruptly at the card's edge. */
-    0 0
-      calc(210px + 40px * var(--media-pulse) + 60px * var(--media-hover) + 30px * var(--media-zoom))
-      rgba(154, 176, 154,
-        calc(0.05 + 0.015 * var(--media-pulse) + 0.03 * var(--media-hover) + 0.025 * var(--media-zoom))),
-    /* Mid ambient — the main visible glow; this is what pulses. */
-    0 0
-      calc(115px + 25px * var(--media-pulse) + 60px * var(--media-hover) + 50px * var(--media-zoom))
-      rgba(154, 176, 154,
-        calc(0.11 + 0.03 * var(--media-pulse) + 0.065 * var(--media-hover) + 0.06 * var(--media-zoom))),
-    /* Tight inner accent — fades in on hover or during zoom. */
-    0 0
-      calc(0px + 30px * var(--media-hover) + 50px * var(--media-zoom))
-      rgba(154, 176, 154,
-        calc(0.06 * var(--media-hover) + 0.09 * var(--media-zoom)));
-  animation: mediaGlowPulse 7s ease-in-out infinite;
-  transition:
-    --media-hover 3.2s cubic-bezier(0.22, 0.61, 0.36, 1),
-    --media-zoom 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-@keyframes mediaGlowPulse {
-  0%, 100% { --media-pulse: 0; }
-  50%      { --media-pulse: 1; }
-}
-.project-gif:hover,
-.gallery-wrapper:hover,
-.project-video:hover {
-  --media-hover: 1;
+    0 0 90px rgba(154, 176, 154, 0.07),
+    0 0 40px rgba(154, 176, 154, 0.10);
 }
 
-/* JS adds .is-zooming-target to whichever element is being zoomed.
-   The --media-zoom variable transitions on the same 550ms curve as the
-   zoom transform, so the glow grows and shrinks in lockstep with the
-   image scale. Removing the class simply transitions --media-zoom back
-   to 0 — no separate exit logic needed. */
+/* JS toggles .is-zooming-target on the element being viewed in the page-zoom.
+   A slightly stronger static glow makes the zoomed image read as "in focus".
+   No transition — the swap is instant, so there's no per-frame shadow repaint. */
 .is-zooming-target {
-  --media-zoom: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .project-gif,
-  .gallery-wrapper,
-  .project-video {
-    animation: none;
-  }
+  box-shadow:
+    0 0 120px rgba(154, 176, 154, 0.12),
+    0 0 60px rgba(154, 176, 154, 0.16);
 }
 
 @media (prefers-reduced-motion: reduce) {

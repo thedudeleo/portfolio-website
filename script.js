@@ -852,11 +852,13 @@ const link = e.target.closest('.nav-circle-item');
       : window.innerHeight + margin;
     return sectionTop < threshold;
   }
-  // Welcome ↔ scrolled transition is purely class-toggle: the nav lives in
-  // the same position in both states and the glass pill is always present,
-  // so the only thing that animates is the labels. Forward (.at-top removed,
-  // .collapsed added) the labels retract to dots; reverse they cascade back
-  // open — the pill never fades or changes shape.
+  // Welcome ↔ scrolled transition is purely class-toggle. The nav sits in
+  // the same position in both states; only the glass and labels change.
+  //   Forward (.at-top removed, .collapsed added): labels retract with their
+  //     cascade, then the glass fades in (CSS delays it ~0.68s until the
+  //     cascade finishes) so the pill appears already-collapsed.
+  //   Reverse (.at-top added): glass fades straight out, then labels cascade
+  //     back open as transparent airy text.
   function onScroll () {
     const want = shouldCollapse();
     const isAtTop = nav.classList.contains('at-top');
@@ -951,12 +953,25 @@ const link = e.target.closest('.nav-circle-item');
 
   let visible = false;
 
+  // Coalesce mousemove into one style write per frame. mousemove can fire more
+  // often than the display refreshes; writing cursor.style.transform on every
+  // event does redundant work. Stash the latest coords and flush once per rAF
+  // so we touch the DOM at most once per painted frame.
+  let curX = 0;
+  let curY = 0;
+  let cursorRAF = null;
+  function flushCursor() {
+    cursorRAF = null;
+    cursor.style.transform = `translate3d(${curX}px, ${curY}px, 0)`;
+  }
   document.addEventListener('mousemove', (e) => {
-    cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+    curX = e.clientX;
+    curY = e.clientY;
     if (!visible) {
       visible = true;
       cursor.classList.add('visible');
     }
+    if (cursorRAF === null) cursorRAF = requestAnimationFrame(flushCursor);
   });
 
   document.addEventListener('mouseleave', () => {
