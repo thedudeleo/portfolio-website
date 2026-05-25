@@ -904,6 +904,15 @@ a:hover { color: var(--accent); }
   max-height: 96px;
   width: auto;
 }
+/* Landscape phone where the contributions/ratings columns have collapsed into
+   one stacked column (≤720px): vertical room is scarce, so sit the two rating
+   widgets side by side instead of stacked. When the columns are still side by
+   side (wider screens) the ratings are left as-is. */
+@media (max-width: 720px) and (orientation: landscape) {
+  .ratings { flex-wrap: nowrap; }
+  .ratings .rating-card { flex: 1 1 0; min-width: 0; }
+  .ratings .rating-card img { width: 100%; height: auto; max-height: none; }
+}
 
 /* Awards (transparent PNGs — white card backdrop so they pop) */
 .awards-label {
@@ -970,6 +979,12 @@ a:hover { color: var(--accent); }
   border-radius: 22px;
   overflow: hidden;
   isolation: isolate;
+}
+/* Mobile: the engine name sits directly under the video, so tighten the
+   video's bottom margin to ~a third (32px → 11px) so the label hugs it.
+   Placed after the base rule above so it wins on source order. */
+@media (max-width: 720px) {
+  .project-gif { margin-bottom: 11px; }
 }
 .project-gif img,
 .project-gif video {
@@ -1083,7 +1098,35 @@ a:hover { color: var(--accent); }
   font-size: 0.875rem;
   letter-spacing: 0.06em;
   color: var(--text-muted);
+  transition: opacity 0.3s var(--ease);
 }
+
+/* Counter overlaid on the image while zoomed. Lives inside .gallery-wrapper
+   so it tracks the image across orientations. JS toggles .visible to fade it
+   in on zoom and on each navigation, then back out. The below-carousel
+   .gallery-counter is hidden during zoom so the overlay takes over. */
+.zoom-counter {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 6;
+  padding: 5px 13px;
+  border-radius: 999px;
+  background: rgba(12, 12, 13, 0.6);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+}
+.zoom-counter.visible { opacity: 1; }
+body.is-zoomed .gallery-counter { opacity: 0; }
 
 /* Reviews */
 .reviews {

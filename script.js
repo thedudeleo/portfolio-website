@@ -11,7 +11,16 @@
   // the close (no drift / fighting).
   // =====================================================
   const ZOOM_DURATION_MS = 550;
+  // Fraction of the viewport the zoomed media fills. Desktop media sits in a
+  // narrow column, so 0.82 is a genuine enlargement. On mobile the media is
+  // already ~full-width, so 0.82 would actually shrink it — fill near
+  // edge-to-edge there instead.
   const ZOOM_FILL_RATIO = 0.82;
+  const ZOOM_FILL_RATIO_MOBILE = 0.96;
+  const zoomFillMQ = window.matchMedia('(max-width: 720px), (pointer: coarse)');
+  function zoomFillRatio() {
+    return zoomFillMQ.matches ? ZOOM_FILL_RATIO_MOBILE : ZOOM_FILL_RATIO;
+  }
 
   // CSS cubic-bezier(0.22, 0.61, 0.36, 1) implemented in JS so the rAF
   // loop interpolates on exactly the same curve the CSS transition uses
@@ -209,14 +218,30 @@
     body.style.transition = 'none';
     body.style.transform = '';
     void body.offsetWidth; // force layout so the rect below is untransformed
+
+    // If the zoomed media is a carousel slide, re-snap the carousel to it
+    // first. Each slide is one viewport-width wide, so when the width changed
+    // the old scrollLeft now points between images — measuring without
+    // re-snapping would place the image off-center. Realign so the slide's
+    // left edge sits at the gallery's left edge (its snap position).
+    const gallery = zoomedEl.closest('.gallery');
+    if (gallery) {
+      const galLeft = gallery.getBoundingClientRect().left;
+      const imgLeft = zoomedEl.getBoundingClientRect().left;
+      gallery.style.scrollBehavior = 'auto';
+      gallery.scrollLeft += imgLeft - galLeft;
+      gallery.style.scrollBehavior = '';
+      void gallery.offsetWidth;
+    }
+
     const rect = zoomedEl.getBoundingClientRect();
     if (!rect.width || !rect.height) { zoomOut(); return; }
 
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const scale = Math.min(
-      (vw * ZOOM_FILL_RATIO) / rect.width,
-      (vh * ZOOM_FILL_RATIO) / rect.height
+      (vw * zoomFillRatio()) / rect.width,
+      (vh * zoomFillRatio()) / rect.height
     );
     const imgCx = rect.left + rect.width / 2;
     const imgCy = rect.top + rect.height / 2;
@@ -284,8 +309,8 @@
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const scale = Math.min(
-      (vw * ZOOM_FILL_RATIO) / rect.width,
-      (vh * ZOOM_FILL_RATIO) / rect.height
+      (vw * zoomFillRatio()) / rect.width,
+      (vh * zoomFillRatio()) / rect.height
     );
     const imgCx = rect.left + rect.width / 2;
     const imgCy = rect.top + rect.height / 2;
@@ -333,6 +358,9 @@
     document.querySelectorAll('.gallery').forEach((g) => {
       if (g._stopAuto) g._stopAuto();
     });
+    // Surface the image-count overlay over a zoomed gallery image.
+    const zoomGallery = img.closest('.gallery');
+    if (zoomGallery && zoomGallery._flashZoomCounter) zoomGallery._flashZoomCounter();
 
     // Bind close listeners only AFTER the zoom-in animation has fully
     // completed. zoomOut needs the body to be at its final transform so
@@ -372,6 +400,7 @@
       zoomedGlowTarget.classList.remove('is-zooming-target');
       zoomedGlowTarget = null;
     }
+    document.querySelectorAll('.zoom-counter.visible').forEach((c) => c.classList.remove('visible'));
   }
 
   function zoomOut() {
@@ -386,6 +415,8 @@
     document.body.classList.remove('is-zoomed');
     // Sage backlight fades out over the same 550ms window as the zoom transform.
     if (zoomedGlowTarget) zoomedGlowTarget.classList.remove('is-zooming-target');
+    // Fade out the on-image counter overlay alongside the close.
+    document.querySelectorAll('.zoom-counter.visible').forEach((c) => c.classList.remove('visible'));
 
     if (!zoomedTransform || !zoomedRect) {
       document.documentElement.classList.remove('zoom-locked');
@@ -515,6 +546,22 @@
     // rather than overlaying the image, so the photo isn't covered.
     wrapper.parentNode.insertBefore(counter, wrapper.nextSibling);
 
+    // Overlay counter shown ON TOP of the image while zoomed (the below-
+    // carousel counter is hidden during zoom). Inside the wrapper so it tracks
+    // the image; fades in on zoom and on each navigation, then back out.
+    const zoomCounter = document.createElement('div');
+    zoomCounter.className = 'zoom-counter';
+    zoomCounter.setAttribute('aria-hidden', 'true');
+    wrapper.appendChild(zoomCounter);
+    let zoomCounterTimer = null;
+    function flashZoomCounter() {
+      zoomCounter.textContent = counter.textContent;
+      zoomCounter.classList.add('visible');
+      clearTimeout(zoomCounterTimer);
+      zoomCounterTimer = setTimeout(() => zoomCounter.classList.remove('visible'), 1800);
+    }
+    gallery._flashZoomCounter = flashZoomCounter;
+
     // Initial position: first real image (skip prepended clone), no animation
     function instantJump(left) {
       gallery.style.scrollBehavior = 'auto';
@@ -535,6 +582,9 @@
     }
     function update() {
       counter.textContent = `${originalIdx() + 1} / ${total}`;
+      // While zoomed into this gallery, mirror the count onto the on-image
+      // overlay and re-flash it so navigating updates the visible number.
+      if (zoomActive && zoomedEl && gallery.contains(zoomedEl)) flashZoomCounter();
     }
     function smoothTo(vi) {
       gallery.scrollTo({ left: vi * gallery.offsetWidth, behavior: 'smooth' });
