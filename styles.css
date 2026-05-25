@@ -389,9 +389,9 @@ a:hover { color: var(--accent); }
        expanded menu grows UPWARD from the button instead of pushing off the
        bottom edge. */
     top: auto;
-    bottom: 24px;
+    bottom: 20px;
     left: auto;
-    right: 16px;
+    right: 20px;
     transform: none;
     /* Mobile pill is right-anchored; dots line up against the pill's right
        edge with labels extending leftward inside the pill. */

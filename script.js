@@ -49,6 +49,10 @@
   let zoomedRect = null;
   let zoomedScrollY = 0;
   let zoomedTransform = null; // { tx, ty, scale } at fully-open state
+  // The element currently zoomed (gallery <img> or .project-gif figure).
+  // Kept so an orientation change can re-measure it and refit the zoom to
+  // the new viewport instead of closing.
+  let zoomedEl = null;
   // The element that gets the sage backlight glow during zoom — usually
   // the .gallery-wrapper or .project-gif containing the clicked image.
   let zoomedGlowTarget = null;
@@ -191,10 +195,55 @@
     // Block touch-scroll, but don't close.
     if (e.cancelable) e.preventDefault();
   }
+  // Recompute the zoom transform for the current viewport, keeping the same
+  // element centered and filling. Used on viewport changes (notably a phone
+  // rotating to landscape) so the image stays zoomed and re-fits, instead of
+  // closing and dumping the user elsewhere on the page.
+  function refitZoom() {
+    if (!zoomActive || !zoomedEl) { zoomOut(); return; }
+    const body = document.body;
+    // Drop the current transform so the element can be measured at its
+    // resting layout position in the new viewport. Done synchronously with
+    // the re-apply below, so the browser only paints the final state (no
+    // flash of the un-zoomed page).
+    body.style.transition = 'none';
+    body.style.transform = '';
+    void body.offsetWidth; // force layout so the rect below is untransformed
+    const rect = zoomedEl.getBoundingClientRect();
+    if (!rect.width || !rect.height) { zoomOut(); return; }
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const scale = Math.min(
+      (vw * ZOOM_FILL_RATIO) / rect.width,
+      (vh * ZOOM_FILL_RATIO) / rect.height
+    );
+    const imgCx = rect.left + rect.width / 2;
+    const imgCy = rect.top + rect.height / 2;
+    const tx = vw / 2 - imgCx;
+    const ty = vh / 2 - imgCy;
+    const originX = imgCx + window.scrollX;
+    const originY = imgCy + window.scrollY;
+
+    // Refresh the cached open-state so a later zoomOut animates from here.
+    zoomedRect = rect;
+    zoomedScrollY = window.scrollY;
+    zoomedTransform = { tx, ty, scale };
+    scrollLockY = window.scrollY; // keep the scroll lock pinned to the new pos
+
+    body.style.transformOrigin = `${originX}px ${originY}px`;
+    void body.offsetWidth;
+    body.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+  }
+  let resizeRAF = null;
   function onZoomedResize() {
-    // Don't try to recompute — just close. Safer than half-recomputing
-    // a transform during a viewport change.
-    zoomOut();
+    // Coalesce bursts of resize events (rotation can fire several) into one
+    // refit per frame.
+    if (resizeRAF !== null) cancelAnimationFrame(resizeRAF);
+    resizeRAF = requestAnimationFrame(() => {
+      resizeRAF = null;
+      refitZoom();
+    });
   }
 
   function bindZoomListeners() {
@@ -246,6 +295,7 @@
     const originY = imgCy + window.scrollY;
 
     zoomActive = true;
+    zoomedEl = img;
     zoomedRect = rect;
     zoomedScrollY = window.scrollY;
     zoomedTransform = { tx, ty, scale };
@@ -315,6 +365,7 @@
     zoomedRect = null;
     zoomedScrollY = 0;
     zoomedTransform = null;
+    zoomedEl = null;
     // Defensive: ensure no element is left tagged with the glow class
     // (e.g. if zoom was hard-canceled before zoomOut got to clear it).
     if (zoomedGlowTarget) {
