@@ -648,6 +648,37 @@
       restartAuto();
     });
 
+    // Touch swipe — only while zoomed. In normal view the carousel pans via
+    // native overflow scroll, but the page-zoom hard-locks touch (touch-action:
+    // none + a capture-phase touchmove preventDefault), which would otherwise
+    // leave swipe dead and only the arrows working. Here we read the raw touch
+    // points (those events still fire even with touch-action: none) and page
+    // through the same goPrev/goNext the arrows use.
+    const SWIPE_PX = 40;          // min horizontal travel to commit
+    const SWIPE_FLICK = 0.4;      // px/ms — a fast flick commits below SWIPE_PX
+    let touchX = 0, touchY = 0, touchT = 0, swiping = false;
+    gallery.addEventListener('touchstart', (e) => {
+      if (!zoomActive) return;
+      const t = e.touches[0];
+      touchX = t.clientX; touchY = t.clientY; touchT = performance.now();
+      swiping = true;
+    }, { passive: true });
+    gallery.addEventListener('touchend', (e) => {
+      if (!swiping) return;
+      swiping = false;
+      if (!zoomActive) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - touchX;
+      const dy = t.clientY - touchY;
+      const dt = performance.now() - touchT || 1;
+      // Only a mostly-horizontal gesture pages; vertical is ignored so the
+      // image isn't flipped by an accidental up/down drag.
+      if (Math.abs(dx) <= Math.abs(dy)) return;
+      if (Math.abs(dx) < SWIPE_PX && Math.abs(dx) / dt < SWIPE_FLICK) return;
+      if (dx < 0) goNext(); else goPrev();
+      restartAuto();
+    }, { passive: true });
+
     // Click → zoom-in (the same image element grows from its slot to
     // viewport-fill, no backdrop / clone / fade — handler defined below).
     let downX = 0;
@@ -690,16 +721,22 @@
 
   const items = Array.from(nav.querySelectorAll('.nav-circle-item'));
 
-  // Keep the nav's top aligned with .hero-bio regardless of font/layout.
+  // Touch devices (any size) and narrow viewports use the tap-to-open circle
+  // nav; only wide mouse-driven viewports get the hover pill. Mirrors the CSS
+  // `(max-width: 720px), (pointer: coarse)` switch.
+  const mobileMQ = window.matchMedia('(max-width: 720px), (pointer: coarse)');
+
+  // Keep the desktop nav's top aligned with .hero-bio regardless of font/layout.
   // offsetTop chain is layout-based (unaffected by CSS animation transforms).
-  const heroBio  = document.querySelector('.hero-bio');
-  const heroName = document.querySelector('.hero-name');
+  const heroBio = document.querySelector('.hero-bio');
   function alignNavWithBio() {
-    const isMobile = window.innerWidth <= 720;
-    const target = isMobile ? heroName : heroBio;
-    if (!target) return;
+    // Circle nav (touch / narrow): a fixed bottom-right button positioned
+    // entirely by CSS. Clear any inline top the desktop path set so `bottom`
+    // can take over.
+    if (mobileMQ.matches) { nav.style.top = ''; return; }
+    if (!heroBio) return;
     let top = 0;
-    let el = target;
+    let el = heroBio;
     while (el && el !== document.body) {
       top += el.offsetTop;
       el = el.offsetParent;
@@ -781,6 +818,19 @@
   let raf = null;
   function check(mx, my) {
     if (!proximityEnabled) return;
+    // Proximity is a scrolled-state behavior only — never collapse the airy
+    // welcome labels while the nav is at the top.
+    if (nav.classList.contains('at-top')) return;
+    // The pill opens its labels leftward, over the content's right edge. Below
+    // the content's max-width (1080px) there's no gutter, so the labels would
+    // crowd the body text — keep it collapsed (dots only) in that range.
+    if (window.innerWidth < 1080) {
+      if (!collapsed) {
+        collapsed = true;
+        nav.classList.add('collapsed');
+      }
+      return;
+    }
     const r = nav.getBoundingClientRect();
     const dx = Math.max(r.left - mx, 0, mx - r.right);
     const dy = Math.max(r.top - my, 0, my - r.bottom);
@@ -805,19 +855,37 @@
   nav.addEventListener('mouseenter', () => { isHovered = true; });
   nav.addEventListener('mouseleave', () => { isHovered = false; onScroll(); });
 
-  // Mobile tap-to-toggle. Hover-proximity does nothing on touch screens, so
-  // the .expanded class is the only way for phone users to open the menu.
-  const mobileMQ = window.matchMedia('(max-width: 720px)');
+  // Open/close the circle menu. Closing holds .expanded for a beat so the rows
+  // fade out (CSS .is-closing) before the pill collapses — otherwise the menu
+  // blinks out instantly. openMenu cancels any in-flight close.
+  let menuCloseTimer = null;
+  function openMenu() {
+    clearTimeout(menuCloseTimer);
+    nav.classList.remove('is-closing');
+    nav.classList.add('expanded');
+  }
+  function closeMenu() {
+    if (!nav.classList.contains('expanded')) return;
+    nav.classList.add('is-closing');
+    clearTimeout(menuCloseTimer);
+    menuCloseTimer = setTimeout(() => {
+      nav.classList.remove('expanded', 'is-closing');
+    }, 180);
+  }
+
+  // Tap-to-toggle for the circle nav. Hover-proximity does nothing on touch
+  // screens, so the .expanded class is the only way to open the menu.
   function onNavClick(e) {
     if (!mobileMQ.matches) return;
-const link = e.target.closest('.nav-circle-item');
+    const link = e.target.closest('.nav-circle-item');
     if (link) {
       // Picked a section — close the menu so the user sees the page.
-      nav.classList.remove('expanded');
+      closeMenu();
       return;
     }
     // Tap on the dot itself toggles the menu.
-    nav.classList.toggle('expanded');
+    if (nav.classList.contains('expanded')) closeMenu();
+    else openMenu();
   }
   nav.addEventListener('click', onNavClick);
 
@@ -826,13 +894,17 @@ const link = e.target.closest('.nav-circle-item');
     if (!mobileMQ.matches) return;
     if (!nav.classList.contains('expanded')) return;
     if (nav.contains(e.target)) return;
-    nav.classList.remove('expanded');
+    closeMenu();
   });
 
-  // Drop the .expanded state if the viewport grows past the mobile breakpoint
-  // — desktop has its own (hover) logic and the class would just stick.
+  // Drop the .expanded state if the device switches to the desktop pill — that
+  // path has its own (hover) logic and the class would just stick. No fade
+  // needed here, so reset instantly.
   mobileMQ.addEventListener('change', (e) => {
-    if (!e.matches) nav.classList.remove('expanded');
+    if (!e.matches) {
+      clearTimeout(menuCloseTimer);
+      nav.classList.remove('expanded', 'is-closing');
+    }
   });
 
   // Collapse trigger: nav closes as soon as the Eriksholm section enters the
@@ -865,18 +937,22 @@ const link = e.target.closest('.nav-circle-item');
 
     if (isAtTop && want) {
       nav.classList.remove('at-top');
-      if (!isHovered && !collapsed) {
-        proximityEnabled = true;
+      // Enable proximity now so the pill collapses once the cursor leaves —
+      // even if the user is hovering the nav right now (e.g. they just clicked
+      // a label). Only snap to the collapsed (dots) look immediately when
+      // they're NOT hovering, so it doesn't close under the cursor.
+      proximityEnabled = true;
+      if (!isHovered) {
         collapsed = true;
         nav.classList.add('collapsed');
       }
     } else if (!isAtTop && !want) {
+      // Back at the welcome state — always restore the airy labels and turn
+      // proximity off, regardless of hover, so the nav can't get stuck.
       nav.classList.add('at-top');
-      if (!isHovered && collapsed) {
-        proximityEnabled = false;
-        collapsed = false;
-        nav.classList.remove('collapsed');
-      }
+      proximityEnabled = false;
+      collapsed = false;
+      nav.classList.remove('collapsed');
     }
   }
   window.addEventListener('scroll', onScroll, { passive: true });
@@ -919,9 +995,16 @@ const link = e.target.closest('.nav-circle-item');
           a.target.compareDocumentPosition(b.target) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
         );
       batch.forEach((entry, i) => {
-        entry.target.style.transitionDelay = `${i * 120}ms`;
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
+        const el = entry.target;
+        const delay = i * 120;
+        el.style.transitionDelay = `${delay}ms`;
+        el.classList.add('visible');
+        observer.unobserve(el);
+        // The stagger delay exists only to cascade the reveal. If left set it
+        // also delays every later transition on the element (e.g. the
+        // review-quote hover), making them feel laggy — so clear it once the
+        // reveal (0.7s) has played out from its staggered start.
+        setTimeout(() => { el.style.transitionDelay = ''; }, delay + 800);
       });
     },
     { threshold: 0, rootMargin: '0px' }
@@ -1009,10 +1092,9 @@ const link = e.target.closest('.nav-circle-item');
       cursor.classList.remove('visible');
     }
   }
+  // The cursor reappears naturally on the next mousemove after focus returns,
+  // so only the blur side needs handling.
   window.addEventListener('blur', handleFocusChange);
-  window.addEventListener('focus', () => {
-    // Cursor will reappear naturally on the next mousemove inside the page.
-  });
 })();
 
 // =====================================================

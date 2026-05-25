@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "portfolio",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["/Users/thedudeleo/Documents/Home/CodeProjects/portfolio_v2/serve.py"],
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8765", "--bind", "127.0.0.1"],
       "port": 8765,
       "autoPort": true
     }

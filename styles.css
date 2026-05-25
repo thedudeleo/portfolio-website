@@ -85,6 +85,15 @@ body.is-zoomed .zoom-fade-down {
   opacity: 0;
   transform: translateY(48px);
 }
+/* The nav is position:fixed inside <body>, which the page-zoom transforms — so
+   during a zoom it scales/slides out of place (off-screen, or overlapping the
+   zoomed image depending on scroll). It's not useful while viewing a zoomed
+   image, so hide it for the duration. `visibility` (not opacity) because the
+   hero-rise animation's `forwards` fill pins opacity:1 and would override it.
+   Only active while .is-zoomed is set, so it can't affect normal behavior. */
+body.is-zoomed #nav-circle {
+  visibility: hidden;
+}
 
 body {
   margin: 0;
@@ -126,7 +135,6 @@ a:hover { color: var(--accent); }
 }
 
 .muted { color: var(--text-muted); font-weight: 400; }
-.small { font-size: 0.875rem; }
 
 /* =====================================================
    NAV CIRCLE — column of dots/labels; collapses on scroll
@@ -324,14 +332,64 @@ a:hover { color: var(--accent); }
   transition-delay: calc(0.4s + var(--abs-n, 0) * 0.07s);
 }
 
-@media (max-width: 720px) {
-  /* On mobile the nav is a small dark-glass circle in the top-right with
-     a sage dot in the middle. Tap to expand into the full menu (dots +
-     labels). Desktop's hover-proximity is a no-op on touch screens, so
-     .expanded is the only way for phone users to open it. */
+/* Small desktop (mouse, below the content's max-width): the airy welcome
+   labels would crowd the narrow hero, and the scrolled nav is already dots-only
+   here (hover-expand is disabled under 1080px). So keep the nav a compact
+   liquid-glass dots pill even at the top — same look as when scrolled.
+   `pointer: fine` keeps this off touch devices, which use the circle nav. */
+@media (min-width: 721px) and (max-width: 1079px) and (pointer: fine) {
+  .nav-circle.at-top {
+    background: rgba(12, 12, 13, 0.55);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 6px 22px rgba(0, 0, 0, 0.5),
+      0 0 28px rgba(154, 176, 154, 0.12);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    backdrop-filter: blur(12px) saturate(1.4);
+  }
+  .nav-circle.at-top .nav-label {
+    opacity: 0;
+    max-width: 0;
+    transform: translateX(-6px);
+    margin-right: -16px;
+  }
+  /* Hover-to-open: the compact pill shows no labels by default here, so
+     hovering directly over it reveals them (and the pill grows to fit). Unlike
+     the proximity expand (disabled under 1080px), this only fires when the
+     cursor is ON the pill — so it never auto-crowds the text as the mouse
+     passes nearby. Placed last so it wins over the at-top/collapsed hides. */
+  .nav-circle:hover .nav-label {
+    opacity: 1;
+    max-width: 240px;
+    transform: translateX(0);
+    margin-right: 0;
+  }
+}
+
+/* Below the content's max-width, the side gutter collapses to the container's
+   padding, which widens to 64px in this range (see .container above). The base
+   `right` floors at 16px from the viewport edge, which would let the pill drift
+   out past the content. Re-derive it from the 64px padding so the pill stays
+   the same 16px inside the content's right edge as it does on wide screens. */
+@media (min-width: 721px) and (max-width: 1180px) {
+  .nav-circle { right: max(calc(50% - 460px), 80px); }
+}
+
+/* Circle nav for every touch device (any orientation) and narrow viewports.
+   The desktop pill relies on hover-proximity — a no-op on touch — and its tall
+   label column gets cut off on short landscape phones, so touch always gets the
+   tap-to-open circle instead. `pointer: coarse` catches phones/tablets at any
+   width; `max-width` keeps the circle on narrow mouse windows too. */
+@media (max-width: 720px), (pointer: coarse) {
+  /* Small dark-glass circle in the bottom-right thumb zone with a sage dot in
+     the middle. Tap to expand into the full menu (dots + labels). */
   .nav-circle,
   .nav-circle.at-top {
-    top: 52px;
+    /* Bottom-right thumb zone (one-handed reach). Anchored by `bottom` so the
+       expanded menu grows UPWARD from the button instead of pushing off the
+       bottom edge. */
+    top: auto;
+    bottom: 24px;
     left: auto;
     right: 16px;
     transform: none;
@@ -397,6 +455,7 @@ a:hover { color: var(--accent); }
     flex-direction: row-reverse;
     font-size: 1.25rem;
     --shift-y: 0px;
+    transition: opacity 0.18s var(--ease);
   }
   .nav-circle.expanded .nav-label,
   .nav-circle.at-top.expanded .nav-label {
@@ -405,6 +464,11 @@ a:hover { color: var(--accent); }
     transform: translateX(0);
     margin-left: 0;
     margin-right: 0;
+  }
+  /* Closing: JS holds .expanded so the box stays put while the rows fade out,
+     then drops both classes — so tapping away animates instead of blinking. */
+  .nav-circle.expanded.is-closing .nav-circle-item {
+    opacity: 0;
   }
 
 }
@@ -500,7 +564,9 @@ a:hover { color: var(--accent); }
 .about-image {
   margin-bottom: 24px;
   display: flex;
-  justify-content: center;
+  /* Left-aligned in the two-column layout so the headshot lines up with the
+     "About Me" heading and the left edge of the content. */
+  justify-content: flex-start;
 }
 .about-image img {
   width: 180px;
@@ -579,11 +645,6 @@ a:hover { color: var(--accent); }
   color: var(--text);
   margin: 0 0 36px;
   line-height: 1.65;
-}
-
-.hero-bio + .hero-bio {
-  margin-top: 1em;
-  margin-bottom: 36px;
 }
 
 /* Specialty list under the hero tagline */
@@ -834,21 +895,14 @@ a:hover { color: var(--accent); }
 }
 
 .rating-card {
-  position: relative;
   display: inline-block;
   border-radius: 14px;
   overflow: hidden;
-  isolation: isolate;
-  box-shadow:
-    0 6px 22px rgba(0, 0, 0, 0.45),
-    0 2px 6px rgba(0, 0, 0, 0.25);
 }
 .rating-card img {
   display: block;
   max-height: 96px;
   width: auto;
-  position: relative;
-  z-index: 1;
 }
 
 /* Awards (transparent PNGs — white card backdrop so they pop) */
@@ -858,17 +912,19 @@ a:hover { color: var(--accent); }
 }
 .awards-row {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: stretch;
-  gap: 24px;
-  flex-wrap: wrap;
-  margin: 0 0 56px;
+  gap: 32px;
+  flex-wrap: nowrap;
+  max-width: var(--container-narrow);
+  margin: 0 auto 56px;
 }
 .awards-row img {
-  flex: 1 1 200px;
-  max-width: 280px;
-  height: 160px;
+  flex: 1 1 0;
+  max-width: 240px;
+  height: 150px;
   width: 100%;
+  min-width: 0;
   object-fit: contain;
   background: none;
 }
@@ -931,7 +987,10 @@ a:hover { color: var(--accent); }
   display: none !important;
   -webkit-appearance: none !important;
 }
-@media (max-width: 720px) {
+/* Portrait only: keep the video from eating the whole tall screen. In
+   landscape this cap would fight the 16/9 aspect-ratio (capped height + full
+   width = a wide sliver), so it's scoped out of landscape. */
+@media (max-width: 720px) and (orientation: portrait) {
   .project-gif img,
   .project-gif video {
     max-height: 50vh;
@@ -960,7 +1019,6 @@ a:hover { color: var(--accent); }
   scroll-snap-align: center;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  border-radius: 22px;
   cursor: none;
   background: var(--surface);
   user-select: none;
@@ -1035,12 +1093,27 @@ a:hover { color: var(--accent); }
   margin-bottom: 56px;
   max-width: 880px;
 }
+.review-quote {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius);
+}
 .reviews blockquote {
   margin: 0;
   padding: 24px 28px;
   background: var(--surface);
   border-left: 2px solid var(--accent);
   border-radius: var(--radius);
+  height: 100%;
+  will-change: transform;
+  transition:
+    transform 0.25s var(--ease),
+    background-color 0.25s var(--ease);
+}
+.review-quote:hover blockquote {
+  transform: translateX(6px);
+  background: var(--surface-2);
 }
 .reviews blockquote p {
   margin: 0 0 12px;
@@ -1105,14 +1178,6 @@ a:hover { color: var(--accent); }
 @media (max-width: 820px) {
   .about-grid { grid-template-columns: 1fr; gap: 32px; }
 }
-.about-heading {
-  font-family: var(--font-display);
-  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-  font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
 .about-body p {
   font-size: 1.0625rem;
   line-height: 1.7;
@@ -1127,7 +1192,7 @@ a:hover { color: var(--accent); }
   gap: 14px;
   align-items: flex-start;
   width: max-content;
-  margin: 36px auto 0;
+  margin: 36px 0 0;
 }
 .about-contact a {
   display: inline-flex;
@@ -1164,16 +1229,6 @@ a:hover { color: var(--accent); }
     margin: 0;
     width: auto;
   }
-}
-
-/* =====================================================
-   FOOTER
-   ===================================================== */
-.footer {
-  padding: 32px 0;
-  border-top: 1px solid var(--border);
-  color: var(--text-dim);
-  font-size: 0.875rem;
 }
 
 /* =====================================================
