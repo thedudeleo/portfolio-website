@@ -204,6 +204,32 @@
     // Block touch-scroll, but don't close.
     if (e.cancelable) e.preventDefault();
   }
+  // Swipe up or down to dismiss the zoom — the standard mobile fullscreen-media
+  // gesture. Horizontal swipes are left alone so the gallery can still page
+  // between images while zoomed.
+  let zoomTouchX = 0, zoomTouchY = 0, zoomTouchT = 0, zoomTouching = false;
+  function onZoomedTouchStart(e) {
+    if (e.touches.length !== 1) { zoomTouching = false; return; } // ignore pinch
+    const t = e.touches[0];
+    zoomTouchX = t.clientX;
+    zoomTouchY = t.clientY;
+    zoomTouchT = performance.now();
+    zoomTouching = true;
+  }
+  function onZoomedTouchEnd(e) {
+    if (!zoomTouching) return;
+    zoomTouching = false;
+    const t = e.changedTouches[0];
+    if (!t) return;
+    const dx = t.clientX - zoomTouchX;
+    const dy = t.clientY - zoomTouchY;
+    const dt = performance.now() - zoomTouchT || 1;
+    // Only a mostly-vertical gesture dismisses; commit on enough travel OR a
+    // quick flick. (Horizontal is the gallery's image-paging swipe.)
+    if (Math.abs(dy) <= Math.abs(dx)) return;
+    if (Math.abs(dy) < 70 && Math.abs(dy) / dt < 0.5) return;
+    zoomOut();
+  }
   // Recompute the zoom transform for the current viewport, keeping the same
   // element centered and filling. Used on viewport changes (notably a phone
   // rotating to landscape) so the image stays zoomed and re-fits, instead of
@@ -278,6 +304,8 @@
     window.addEventListener('keydown', onZoomedKey, true);
     window.addEventListener('wheel', onZoomedWheel, { passive: false, capture: true });
     window.addEventListener('touchmove', onZoomedTouch, { passive: false, capture: true });
+    window.addEventListener('touchstart', onZoomedTouchStart, { passive: true, capture: true });
+    window.addEventListener('touchend', onZoomedTouchEnd, { passive: true, capture: true });
     window.addEventListener('resize', onZoomedResize);
   }
   function unbindZoomListeners() {
@@ -286,6 +314,8 @@
     window.removeEventListener('keydown', onZoomedKey, true);
     window.removeEventListener('wheel', onZoomedWheel, { passive: false, capture: true });
     window.removeEventListener('touchmove', onZoomedTouch, { passive: false, capture: true });
+    window.removeEventListener('touchstart', onZoomedTouchStart, { passive: true, capture: true });
+    window.removeEventListener('touchend', onZoomedTouchEnd, { passive: true, capture: true });
     window.removeEventListener('resize', onZoomedResize);
   }
 
@@ -749,36 +779,84 @@
       restartAuto();
     });
 
-    // Touch swipe — only while zoomed. In normal view the carousel pans via
-    // native overflow scroll, but the page-zoom hard-locks touch (touch-action:
-    // none + a capture-phase touchmove preventDefault), which would otherwise
-    // leave swipe dead and only the arrows working. Here we read the raw touch
-    // points (those events still fire even with touch-action: none) and page
-    // through the same goPrev/goNext the arrows use.
-    const SWIPE_PX = 40;          // min horizontal travel to commit
-    const SWIPE_FLICK = 0.4;      // px/ms — a fast flick commits below SWIPE_PX
-    let touchX = 0, touchY = 0, touchT = 0, swiping = false;
+    // Touch drag while zoomed — a finger-following carousel, like the desktop
+    // mouse drag. In normal view the carousel pans via native overflow scroll,
+    // but the page-zoom hard-locks touch (touch-action: none + a capture-phase
+    // touchmove preventDefault), so here we read the raw touch points (they
+    // still fire under touch-action: none) and move the gallery with the
+    // finger — dividing the delta by the zoom scale so the image tracks the
+    // finger 1:1 on screen. Vertical drags bail out so the swipe-to-dismiss
+    // handler can take them. All gated on zoomActive, so normal-view native
+    // scrolling is untouched.
+    const TOUCH_ACTIVATE_PX = 8;
+    const TOUCH_FLICK = 0.4;            // px/ms finger speed for a flick commit
+    let tStartX = 0, tStartY = 0, tStartScroll = 0, tScale = 1;
+    let tArmed = false, tDragging = false, tDecided = false;
+    let tLastX = 0, tLastT = 0, tVel = 0;
+
     gallery.addEventListener('touchstart', (e) => {
-      if (!zoomActive) return;
+      if (!zoomActive || e.touches.length !== 1) { tArmed = false; return; }
       const t = e.touches[0];
-      touchX = t.clientX; touchY = t.clientY; touchT = performance.now();
-      swiping = true;
+      tStartX = t.clientX; tStartY = t.clientY;
+      tStartScroll = gallery.scrollLeft;
+      tScale = (zoomedTransform && zoomedTransform.scale) || 1;
+      tLastX = t.clientX; tLastT = performance.now(); tVel = 0;
+      tArmed = true; tDragging = false; tDecided = false;
     }, { passive: true });
-    gallery.addEventListener('touchend', (e) => {
-      if (!swiping) return;
-      swiping = false;
-      if (!zoomActive) return;
-      const t = e.changedTouches[0];
-      const dx = t.clientX - touchX;
-      const dy = t.clientY - touchY;
-      const dt = performance.now() - touchT || 1;
-      // Only a mostly-horizontal gesture pages; vertical is ignored so the
-      // image isn't flipped by an accidental up/down drag.
-      if (Math.abs(dx) <= Math.abs(dy)) return;
-      if (Math.abs(dx) < SWIPE_PX && Math.abs(dx) / dt < SWIPE_FLICK) return;
-      if (dx < 0) goNext(); else goPrev();
+
+    gallery.addEventListener('touchmove', (e) => {
+      if (!tArmed || !zoomActive) return;
+      const t = e.touches[0];
+      const dx = t.clientX - tStartX;
+      const dy = t.clientY - tStartY;
+      // Lock the gesture direction once past the activation threshold.
+      if (!tDecided) {
+        if (Math.abs(dx) < TOUCH_ACTIVATE_PX && Math.abs(dy) < TOUCH_ACTIVATE_PX) return;
+        tDecided = true;
+        if (Math.abs(dy) > Math.abs(dx)) { tArmed = false; return; } // vertical → dismiss
+        tDragging = true;
+        gallery.style.scrollSnapType = 'none';
+        gallery.style.scrollBehavior = 'auto';
+      }
+      const now = performance.now();
+      const ddt = now - tLastT;
+      if (ddt > 0) tVel = (t.clientX - tLastX) / ddt;
+      tLastX = t.clientX; tLastT = now;
+      // Follow the finger; divide by scale because the gallery is rendered
+      // scaled by the zoom transform, and drop the activation pixels so motion
+      // is continuous from the moment the drag engages.
+      gallery.scrollLeft = tStartScroll - (dx - Math.sign(dx) * TOUCH_ACTIVATE_PX) / tScale;
+    }, { passive: true });
+
+    function endZoomDrag() {
+      const wasDragging = tDragging;
+      tArmed = false; tDragging = false; tDecided = false;
+      if (!wasDragging) return;
+      gallery.style.scrollSnapType = '';
+      gallery.style.scrollBehavior = '';
+      const width = gallery.offsetWidth;
+      const startIdx = Math.round(tStartScroll / width);
+      const galleryRatio = (gallery.scrollLeft - tStartScroll) / width;
+      // Finger velocity is opposite-signed to gallery scroll direction:
+      // flicking left (negative) advances to the next image (positive).
+      const intentDirection =
+        Math.abs(tVel) > TOUCH_FLICK
+          ? (tVel < 0 ? 1 : -1)
+          : (Math.abs(galleryRatio) >= COMMIT_RATIO ? Math.sign(galleryRatio) : 0);
+      const targetIdx = intentDirection === 0
+        ? startIdx
+        : startIdx + intentDirection * Math.max(1, Math.round(Math.abs(galleryRatio)));
+      gallery.scrollTo({ left: targetIdx * width, behavior: 'smooth' });
+      // After the smooth scroll settles, swap clone for real on wrap-around.
+      setTimeout(() => {
+        const vi = visualIdx();
+        if (vi === 0) instantJump(total * width);
+        else if (vi === total + 1) instantJump(width);
+      }, 420);
       restartAuto();
-    }, { passive: true });
+    }
+    gallery.addEventListener('touchend', endZoomDrag, { passive: true });
+    gallery.addEventListener('touchcancel', endZoomDrag, { passive: true });
 
     // Click → zoom-in (the same image element grows from its slot to
     // viewport-fill, no backdrop / clone / fade — handler defined below).
@@ -827,14 +905,21 @@
   // `(max-width: 720px), (pointer: coarse)` switch.
   const mobileMQ = window.matchMedia('(max-width: 720px), (pointer: coarse)');
 
-  // Keep the desktop nav's top aligned with .hero-bio regardless of font/layout.
-  // offsetTop chain is layout-based (unaffected by CSS animation transforms).
+  // The desktop pill rests aligned with .hero-bio at the top of the page, then
+  // behaves like position: sticky — it stays anchored to the page and scrolls
+  // UP with the content until it reaches NAV_STICKY_TOP near the top, where it
+  // pins; scrolling back up rides it down to the welcome spot again.
+  //
+  // NAV_STICKY_TOP (px from the viewport top) ≈ half the welcome offset: a
+  // comfortable top margin that keeps the pill high in the upper region for
+  // prominence while staying well clear of the very edge (so it reads as a side
+  // element, not a header bar). offsetTop chain is layout-based, so it's
+  // unaffected by the hero's CSS animation transforms.
   const heroBio = document.querySelector('.hero-bio');
-  function alignNavWithBio() {
-    // Circle nav (touch / narrow): a fixed bottom-right button positioned
-    // entirely by CSS. Clear any inline top the desktop path set so `bottom`
-    // can take over.
-    if (mobileMQ.matches) { nav.style.top = ''; return; }
+  const NAV_STICKY_TOP = 100;
+  let navWelcomeTop = 0; // document-Y of the welcome resting spot (≈ hero-bio)
+
+  function measureNavWelcomeTop() {
     if (!heroBio) return;
     let top = 0;
     let el = heroBio;
@@ -842,9 +927,17 @@
       top += el.offsetTop;
       el = el.offsetParent;
     }
-    nav.style.top = top + 'px';
+    navWelcomeTop = top;
   }
-  requestAnimationFrame(alignNavWithBio);
+  function updateNavTop() {
+    // Circle nav (touch / narrow): a fixed bottom-right button positioned
+    // entirely by CSS. Clear any inline top the desktop path set so `bottom`
+    // can take over.
+    if (mobileMQ.matches) { nav.style.top = ''; return; }
+    // Anchored to the page until it reaches the sticky line, then pinned.
+    nav.style.top = Math.max(NAV_STICKY_TOP, navWelcomeTop - window.scrollY) + 'px';
+  }
+  requestAnimationFrame(() => { measureNavWelcomeTop(); updateNavTop(); });
 
   function setActive(sectionId) {
     let activeIdx = -1;
@@ -1033,6 +1126,7 @@
   //   Reverse (.at-top added): glass fades straight out, then labels cascade
   //     back open as transparent airy text.
   function onScroll () {
+    updateNavTop();
     const want = shouldCollapse();
     const isAtTop = nav.classList.contains('at-top');
 
@@ -1057,7 +1151,7 @@
     }
   }
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', () => { alignNavWithBio(); onScroll(); }, { passive: true });
+  window.addEventListener('resize', () => { measureNavWelcomeTop(); onScroll(); }, { passive: true });
 })();
 
 // =====================================================
