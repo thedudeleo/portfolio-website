@@ -88,11 +88,13 @@ body.is-zoomed .zoom-fade-down {
 /* The nav is position:fixed inside <body>, which the page-zoom transforms — so
    during a zoom it scales/slides out of place (off-screen, or overlapping the
    zoomed image depending on scroll). It's not useful while viewing a zoomed
-   image, so hide it for the duration. `visibility` (not opacity) because the
-   hero-rise animation's `forwards` fill pins opacity:1 and would override it.
-   Only active while .is-zoomed is set, so it can't affect normal behavior. */
+   image, so fade it out for the duration (and back in on close), in sync with
+   the surrounding-content fades. The opacity fade only works once JS has added
+   .nav-loaded — until then the hero-rise animation's `forwards` fill pins
+   opacity:1 and would beat this rule. Only active while .is-zoomed is set. */
 body.is-zoomed #nav-circle {
-  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
 
 body {
@@ -203,6 +205,7 @@ a:hover { color: var(--accent); }
     background 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) 0.68s,
     border-color 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) 0.68s,
     box-shadow 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) 0.68s,
+    opacity 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
     -webkit-backdrop-filter 0s linear 0.68s,
     backdrop-filter 0s linear 0.68s;
 }
@@ -224,7 +227,8 @@ a:hover { color: var(--accent); }
     padding 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
     background 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
     border-color 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
-    box-shadow 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+    box-shadow 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .nav-circle-item {
@@ -637,6 +641,15 @@ a:hover { color: var(--accent); }
     opacity: 1;
     animation: none;
   }
+}
+/* Once the hero-rise reveal has played, JS adds .nav-loaded to drop the
+   animation — its `forwards` fill would otherwise pin opacity:1 and stop the
+   zoom overlay from fading the nav out. Pin opacity:1 here in the animation's
+   place; the .nav-circle transition then carries opacity changes (the zoom
+   fade) smoothly. */
+.nav-circle.nav-loaded {
+  animation: none;
+  opacity: 1;
 }
 
 .hero-bio {

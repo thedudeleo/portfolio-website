@@ -898,6 +898,18 @@
   const nav = document.getElementById('nav-circle');
   if (!nav) return;
 
+  // The hero-rise reveal animates the nav in with `forwards` fill, which then
+  // pins opacity:1 and beats any opacity rule in the cascade. Once the reveal
+  // has played, drop the animation and pin opacity via .nav-loaded instead, so
+  // the page-zoom overlay can fade the nav out/in (opacity transition) rather
+  // than hard-hiding it. Idempotent; the timeout covers reduced-motion (which
+  // runs no animation, so animationend never fires).
+  function markNavLoaded() { nav.classList.add('nav-loaded'); }
+  nav.addEventListener('animationend', (e) => {
+    if (e.target === nav && e.animationName === 'heroRise') markNavLoaded();
+  });
+  setTimeout(markNavLoaded, 1300);
+
   const items = Array.from(nav.querySelectorAll('.nav-circle-item'));
 
   // Touch devices (any size) and narrow viewports use the tap-to-open circle
