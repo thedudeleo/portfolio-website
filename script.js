@@ -649,8 +649,13 @@
     // timer first — without that guard, multiple mouseleaves leak
     // overlapping intervals, which made galleries race when the page-zoom
     // overlay used to swap focus back and forth.
+    // Honors prefers-reduced-motion — auto-advance is decorative motion the
+    // user didn't ask for, so we never start the timer in that mode. The
+    // chevrons and drag still work for manual paging.
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let autoTimer = null;
     function startAuto() {
+      if (prefersReducedMotion) return;
       if (autoTimer) clearInterval(autoTimer);
       autoTimer = setInterval(goNext, 5000);
     }
@@ -958,17 +963,14 @@
       if (isActive) activeIdx = i;
       item.classList.toggle('active', isActive);
     });
-    // Per-row distance variables for cascade staggers:
-    //   --n         signed offset from active (used for vertical spread)
+    // Per-row distance variables for cascade staggers on .nav-label:
     //   --abs-n     magnitude — used for OUTWARD cascade (expand: active first)
     //   --inv-abs-n maxDistance - magnitude — used for INWARD cascade
     //               (collapse: outermost first, active last)
     if (activeIdx >= 0) {
       const maxAbsN = Math.max(activeIdx, items.length - 1 - activeIdx);
       items.forEach((item, i) => {
-        const n = i - activeIdx;
-        const absN = Math.abs(n);
-        item.style.setProperty('--n', n);
+        const absN = Math.abs(i - activeIdx);
         item.style.setProperty('--abs-n', absN);
         item.style.setProperty('--inv-abs-n', maxAbsN - absN);
       });
@@ -1069,6 +1071,8 @@
     clearTimeout(menuCloseTimer);
     nav.classList.remove('is-closing');
     nav.classList.add('expanded');
+    nav.setAttribute('aria-expanded', 'true');
+    syncCollapsedFocusable();
   }
   function closeMenu() {
     if (!nav.classList.contains('expanded')) return;
@@ -1076,8 +1080,38 @@
     clearTimeout(menuCloseTimer);
     menuCloseTimer = setTimeout(() => {
       nav.classList.remove('expanded', 'is-closing');
+      nav.setAttribute('aria-expanded', 'false');
+      syncCollapsedFocusable();
     }, 180);
   }
+
+  // When the mobile circle is collapsed, the inner anchor rows are display:none
+  // and unreachable — so the aside itself takes the keyboard focus and toggles
+  // the menu on Enter/Space, acting as a disclosure button. On desktop or when
+  // expanded, the inner anchors are focusable normally, so the aside steps out
+  // of the tab order.
+  function syncCollapsedFocusable() {
+    const collapsedOnMobile =
+      mobileMQ.matches && !nav.classList.contains('expanded');
+    if (collapsedOnMobile) {
+      nav.setAttribute('tabindex', '0');
+      nav.setAttribute('role', 'button');
+    } else {
+      nav.removeAttribute('tabindex');
+      nav.removeAttribute('role');
+    }
+  }
+  syncCollapsedFocusable();
+  nav.addEventListener('keydown', (e) => {
+    if (!mobileMQ.matches) return;
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    // Only handle the toggle when the event is on the aside itself —
+    // Enter on an inner anchor should follow the link normally.
+    if (e.target !== nav) return;
+    e.preventDefault();
+    if (nav.classList.contains('expanded')) closeMenu();
+    else openMenu();
+  });
 
   // Tap-to-toggle for the circle nav. Hover-proximity does nothing on touch
   // screens, so the .expanded class is the only way to open the menu.
@@ -1110,7 +1144,9 @@
     if (!e.matches) {
       clearTimeout(menuCloseTimer);
       nav.classList.remove('expanded', 'is-closing');
+      nav.setAttribute('aria-expanded', 'false');
     }
+    syncCollapsedFocusable();
   });
 
   // Collapse trigger: nav closes as soon as the Eriksholm section enters the
@@ -1231,6 +1267,11 @@
   if (!cursor) return;
   // Skip on touch devices
   if (window.matchMedia('(pointer: coarse)').matches) return;
+
+  // Signal that the custom cursor is live, so CSS can hide the native cursor.
+  // Without this gate, a JS failure (or this IIFE not having run yet) would
+  // leave a desktop visitor with no cursor at all on links/buttons/etc.
+  document.documentElement.classList.add('js-ready');
 
   // Move the cursor element out of <body> and onto <html> directly. The
   // page-zoom feature transforms <body>, which would otherwise turn the
@@ -1425,13 +1466,11 @@ document.querySelectorAll('img').forEach((img) => {
       }, 1600);
     };
 
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(addr).then(
-        () => flash('copied!'),
-        () => flash('press ⌘/ctrl+C')
-      );
-    } else {
-      // Legacy fallback: select hidden textarea + execCommand
+    // Legacy fallback: select a hidden textarea + execCommand. Used both when
+    // navigator.clipboard isn't available AND when writeText rejects (Safari
+    // outside user-gesture, permissions failure, etc.) — otherwise the user
+    // would just see a useless "press ⌘/ctrl+C" with no text selected to copy.
+    function legacyCopy() {
       const ta = document.createElement('textarea');
       ta.value = addr;
       ta.setAttribute('readonly', '');
@@ -1442,7 +1481,16 @@ document.querySelectorAll('img').forEach((img) => {
       let ok = false;
       try { ok = document.execCommand('copy'); } catch (_) {}
       document.body.removeChild(ta);
-      flash(ok ? 'copied!' : 'press ⌘/ctrl+C');
+      flash(ok ? 'copied!' : addr);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(addr).then(
+        () => flash('copied!'),
+        legacyCopy
+      );
+    } else {
+      legacyCopy();
     }
   });
 })();

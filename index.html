@@ -22,27 +22,32 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=138" />
+  <link rel="stylesheet" href="styles.css?v=139" />
 
   <!-- Pre-hide reveal-eligible elements before paint to avoid FOUC.
-       Gated on .js so no-JS visitors still see content. -->
+       Gated on .js so no-JS visitors still see content, and on
+       (prefers-reduced-motion: no-preference) so reduced-motion users — whose
+       reveal IIFE early-returns without adding .visible — aren't left looking
+       at a permanently invisible page. -->
   <script>document.documentElement.classList.add('js')</script>
   <style>
-    :where(.js) :where(
-      .project-header,
-      .project-gif,
-      .project-meta,
-      .project-body,
-      .project-columns,
-      .gallery-wrapper,
-      .reviews blockquote,
-      .awards-label,
-      .awards-row,
-      .project-video,
-      .project-links,
-      .about-grid > *
-    ) {
-      opacity: 0;
+    @media (prefers-reduced-motion: no-preference) {
+      :where(.js) :where(
+        .project-header,
+        .project-gif,
+        .project-meta,
+        .project-body,
+        .project-columns,
+        .gallery-wrapper,
+        .reviews blockquote,
+        .awards-label,
+        .awards-row,
+        .project-video,
+        .project-links,
+        .about-grid > *
+      ) {
+        opacity: 0;
+      }
     }
   </style>
 </head>
@@ -54,7 +59,7 @@
 
   <!-- Nav circle — each item is [dot] + [label]. Dots stay put across all
        states; labels fade in/out so transitions feel coherent. -->
-  <aside id="nav-circle" class="nav-circle at-top" aria-label="Section navigation">
+  <aside id="nav-circle" class="nav-circle at-top" aria-label="Section navigation" aria-expanded="false">
 <a class="nav-circle-item active" href="#top"       data-section="top"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">Welcome</span></a>
     <a class="nav-circle-item"        href="#eriksholm" data-section="eriksholm"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">Eriksholm</span></a>
     <a class="nav-circle-item"        href="#releap"    data-section="releap"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">ReLeap</span></a>
@@ -378,7 +383,7 @@
         </div>
         <div class="about-body">
           <p>
-            Game design is thinking about systems, people, and code all at once. That's the creative challenge that keeps pulling me in.
+            Game design is thinking about systems, people, and code all at once. That interplay is a creative challenge that keeps me hooked.
           </p>
 
           <h3 class="section-label spaced">What matters to me</h3>
@@ -415,6 +420,6 @@
 
   </main>
 
-  <script src="script.js?v=90"></script>
+  <script src="script.js?v=91"></script>
 </body>
 </html>
