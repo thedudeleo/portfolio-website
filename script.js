@@ -1494,3 +1494,65 @@ document.querySelectorAll('img').forEach((img) => {
     }
   });
 })();
+
+// =====================================================
+// Gameplay video autoplay — reliable on iOS, gentle on decoders
+//
+// The .project-gif <video>s keep the autoplay attribute for no-JS and desktop,
+// but iOS makes attribute-autoplay a fragile one-shot: over a real network the
+// clip often isn't buffered when Safari evaluates it, and it won't retry —
+// leaving a black frame with the native play button. Low Power Mode blocks
+// muted autoplay entirely until the first user gesture.
+//
+// So when JS is present we drive playback from an IntersectionObserver instead:
+//   - A half-viewport rootMargin starts play (and buffering) before the clip is
+//     visible, so it's already mid-loop on arrival — the user never sees it
+//     "start".
+//   - Off-screen clips pause, so only what's visible competes for iOS's limited
+//     simultaneous-decode budget. A muted loop resumes seamlessly on return.
+//   - play() rejections (Low Power Mode / not-yet-buffered) are swallowed and
+//     retried on canplay and on the first touch, so the loop springs to life
+//     the instant the user interacts. The poster frame shows until then.
+// =====================================================
+(function () {
+  const videos = Array.from(document.querySelectorAll('.project-gif video'));
+  if (!videos.length) return;
+
+  // Which clips the observer currently considers on/near screen — so the
+  // first-gesture unlock only replays those, not every clip on the page.
+  const inView = new Set();
+
+  function tryPlay(v) {
+    const p = v.play();
+    if (p && typeof p.catch === 'function') {
+      p.catch(() => {
+        // Blocked (Low Power Mode) or not enough buffered yet. Retry once the
+        // clip has data; the gesture handler covers the Low Power Mode case.
+        v.addEventListener('canplay', () => {
+          if (inView.has(v)) v.play().catch(() => {});
+        }, { once: true });
+      });
+    }
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const v = entry.target;
+      if (entry.isIntersecting) {
+        inView.add(v);
+        tryPlay(v);
+      } else {
+        inView.delete(v);
+        v.pause();
+      }
+    });
+  }, { rootMargin: '50% 0px' });
+
+  videos.forEach((v) => io.observe(v));
+
+  // Low Power Mode unlock: the first real gesture lets muted video play, so
+  // replay whatever is on screen. Bound once; pointerdown also covers desktop.
+  function unlock() { inView.forEach(tryPlay); }
+  window.addEventListener('touchstart', unlock, { once: true, passive: true });
+  window.addEventListener('pointerdown', unlock, { once: true });
+})();
