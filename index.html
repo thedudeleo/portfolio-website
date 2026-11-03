@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Léo Smith — Level Designer</title>
+  <meta name="description" content="Portfolio of Léo Smith — French-American level designer based in Stockholm. Selected work: Eriksholm, ReLeap, Provincia." />
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <!-- Social preview (Open Graph + Twitter card) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Léo Smith — Level Designer" />
+  <meta property="og:description" content="French-American level designer based in Stockholm. Selected work: Eriksholm, ReLeap, Provincia." />
+  <meta property="og:url" content="https://leosmith.work/" />
+  <meta property="og:image" content="https://leosmith.work/assets/eriksholm/riverend1.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Léo Smith — Level Designer" />
+  <meta name="twitter:description" content="French-American level designer based in Stockholm. Selected work: Eriksholm, ReLeap, Provincia." />
+  <meta name="twitter:image" content="https://leosmith.work/assets/eriksholm/riverend1.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=146" />
+
+  <!-- Pre-hide reveal-eligible elements before paint to avoid FOUC.
+       Gated on .js so no-JS visitors still see content, and on
+       (prefers-reduced-motion: no-preference) so reduced-motion users — whose
+       reveal IIFE early-returns without adding .visible — aren't left looking
+       at a permanently invisible page. -->
+  <script>document.documentElement.classList.add('js')</script>
+  <style>
+    @media (prefers-reduced-motion: no-preference) {
+      :where(.js) :where(
+        .project-gif,
+        .project-meta,
+        .project-body,
+        .project-columns,
+        .gallery-wrapper,
+        .project-video,
+        .project-links,
+        .about-grid > *
+      ) {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor (hover-capable devices only). JS moves it under <html>
+       at startup so the page-zoom transform on <body> doesn't displace it. -->
+  <div id="cursor" aria-hidden="true"></div>
+
+  <!-- Section nav — a row of links on desktop, a tap-to-open circle on touch.
+       Dots only show in the circle's menu. -->
+  <aside id="nav-circle" class="nav-circle at-top" aria-label="Section navigation" aria-expanded="false">
+<a class="nav-circle-item active" href="#top"       data-section="top"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">Welcome</span></a>
+    <a class="nav-circle-item"        href="#eriksholm" data-section="eriksholm"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">Eriksholm</span></a>
+    <a class="nav-circle-item"        href="#releap"    data-section="releap"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">ReLeap</span></a>
+    <a class="nav-circle-item"        href="#provincia" data-section="provincia"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">Provincia</span></a>
+    <a class="nav-circle-item"        href="#about"     data-section="about"><span class="nav-dot" aria-hidden="true"></span><span class="nav-label">About</span></a>
+  </aside>
+
+
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <div class="container">
+        <div class="hero-main">
+          <h1 class="hero-name">Léo Smith</h1>
+          <p class="hero-role">Level Designer · Stockholm</p>
+          <p class="hero-intro">
+            Hi and welcome to my portfolio! I have 3+ years of professional
+            experience in Unreal Engine, most notably shipping
+            Eriksholm: The Stolen Dream with River End Games in 2025.
+          </p>
+
+          <p class="hero-skills-lead">I take a level from start to finish:</p>
+          <ul class="contributions hero-skills">
+            <li>level blockouts</li>
+            <li>puzzle and gameplay design</li>
+            <li>encounter design and NPC scripting</li>
+            <li>in-game cinematics</li>
+            <li>art, VFX, and audio implementation</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="projects" id="projects">
+
+      <!-- ============ ERIKSHOLM ============ -->
+      <article class="project" id="eriksholm">
+        <div class="container">
+          <div class="project-stick">
+
+          <header class="project-header">
+            <p class="project-studio">River End Games</p>
+            <h2 class="project-title">Eriksholm</h2>
+
+          </header>
+
+          <!-- Screenshot gallery -->
+          <div class="gallery" data-gallery="Eriksholm">
+            <img src="assets/eriksholm/riverend1.jpg" alt="Eriksholm screenshot 1" loading="lazy" />
+            <img src="assets/eriksholm/riverend2.jpg" alt="Eriksholm screenshot 2" loading="lazy" />
+            <img src="assets/eriksholm/riverend3.jpg" alt="Eriksholm screenshot 3" loading="lazy" />
+            <img src="assets/eriksholm/riverend4.jpg" alt="Eriksholm screenshot 4" loading="lazy" />
+            <img src="assets/eriksholm/riverend5.jpg" alt="Eriksholm screenshot 5" loading="lazy" />
+          </div>
+
+          <div class="project-intro">
+            <div class="project-body">
+              <p>
+                When Hanna's brother, Herman, disappears and the police begin to
+                pursue him, her search sets off a chain of catastrophic events that
+                will reshape the city.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="project-columns">
+            <div>
+              <h3 class="section-label">My contributions</h3>
+              <ul class="contributions">
+                <li>Responsible for level polish across the entire game.</li>
+                <li>Designed puzzles and player encounters</li>
+                <li>Blocked out levels</li>
+                <li>Scripted NPC behavior and events</li>
+                <li>Mocked up and polished in-game cutscenes</li>
+                <li>Implemented VO, SFX, and animation</li>
+                <li>Facilitated playtests and followed up on player feedback</li>
+              </ul>
+            </div>
+            <div class="project-side"><figure class="project-gif">
+            <video src="assets/eriksholm/gameplay.mp4" poster="assets/eriksholm/gameplay-poster.jpg" autoplay loop muted playsinline aria-label="Eriksholm gameplay"></video>
+          </figure></div>
+          </div>
+          <div class="project-body">
+            <p>
+              Released in July 2025.
+            </p>
+          </div>
+
+          <!-- Gameplay video (autoplay loop) -->
+
+
+          </div>
+
+          <div class="project-extras project-extras--centered"><section class="trailer-block" aria-label="eriksholm trailer">
+              <div class="project-video" data-video-id="WvoOGK7Z-Mo" data-title="Eriksholm — gameplay video">
+            <button class="video-play" aria-label="Play Eriksholm gameplay video"
+              style="background-image: url('https://i.ytimg.com/vi/WvoOGK7Z-Mo/maxresdefault.jpg')">
+              <svg viewBox="0 0 80 80" class="play-icon" aria-hidden="true">
+                <circle cx="40" cy="40" r="32" fill="rgba(255,255,255,0.95)" />
+                <polygon points="33,24 33,56 58,40" fill="#0c0c0d" />
+              </svg>
+            </button>
+          </div>
+            <nav class="store-marks" aria-label="Where to play">
+              <a class="store-mark" href="https://www.xbox.com/games/store/eriksholm-the-stolen-dream/9N3C43Z99ZB3" target="_blank" rel="noopener" aria-label="Xbox" title="Xbox"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.102 21.033C6.211 22.881 8.977 24 12 24c3.026 0 5.789-1.119 7.902-2.967 1.877-1.912-4.316-8.709-7.902-11.417-3.582 2.708-9.779 9.505-7.898 11.417zm11.16-14.406c2.5 2.961 7.484 10.313 6.076 12.912C23.002 17.48 24 14.861 24 12.004c0-3.34-1.365-6.362-3.57-8.536 0 0-.027-.022-.082-.042-.063-.022-.152-.045-.281-.045-.592 0-1.985.434-4.805 3.246zM3.654 3.426c-.057.02-.082.041-.086.042C1.365 5.642 0 8.664 0 12.004c0 2.854.998 5.473 2.661 7.533-1.401-2.605 3.579-9.951 6.08-12.91-2.82-2.813-4.216-3.245-4.806-3.245-.131 0-.223.021-.281.046v-.002zM12 3.551S9.055 1.828 6.755 1.746c-.903-.033-1.454.295-1.521.339C7.379.646 9.659 0 11.984 0H12c2.334 0 4.605.646 6.766 2.085-.068-.046-.615-.372-1.52-.339C14.946 1.828 12 3.545 12 3.545v.006z"/></svg></a>
+              <a class="store-mark" href="https://store.epicgames.com/p/eriksholm-the-stolen-dream-c90ad9" target="_blank" rel="noopener" aria-label="Epic Games Store" title="Epic Games Store"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.537 0C2.165 0 1.66.506 1.66 1.879V18.44a4.262 4.262 0 00.02.433c.031.3.037.59.316.92.027.033.311.245.311.245.153.075.258.13.43.2l8.335 3.491c.433.199.614.276.928.27h.002c.314.006.495-.071.928-.27l8.335-3.492c.172-.07.277-.124.43-.2 0 0 .284-.211.311-.243.28-.33.285-.621.316-.92a4.261 4.261 0 00.02-.434V1.879c0-1.373-.506-1.88-1.878-1.88zm13.366 3.11h.68c1.138 0 1.688.553 1.688 1.696v1.88h-1.374v-1.8c0-.369-.17-.54-.523-.54h-.235c-.367 0-.537.17-.537.539v5.81c0 .369.17.54.537.54h.262c.353 0 .523-.171.523-.54V8.619h1.373v2.143c0 1.144-.562 1.71-1.7 1.71h-.694c-1.138 0-1.7-.566-1.7-1.71V4.82c0-1.144.562-1.709 1.7-1.709zm-12.186.08h3.114v1.274H6.117v2.603h1.648v1.275H6.117v2.774h1.74v1.275h-3.14zm3.816 0h2.198c1.138 0 1.7.564 1.7 1.708v2.445c0 1.144-.562 1.71-1.7 1.71h-.799v3.338h-1.4zm4.53 0h1.4v9.201h-1.4zm-3.13 1.235v3.392h.575c.354 0 .523-.171.523-.54V4.965c0-.368-.17-.54-.523-.54zm-3.74 10.147a1.708 1.708 0 01.591.108 1.745 1.745 0 01.49.299l-.452.546a1.247 1.247 0 00-.308-.195.91.91 0 00-.363-.068.658.658 0 00-.28.06.703.703 0 00-.224.163.783.783 0 00-.151.243.799.799 0 00-.056.299v.008a.852.852 0 00.056.31.7.7 0 00.157.245.736.736 0 00.238.16.774.774 0 00.303.058.79.79 0 00.445-.116v-.339h-.548v-.565H7.37v1.255a2.019 2.019 0 01-.524.307 1.789 1.789 0 01-.683.123 1.642 1.642 0 01-.602-.107 1.46 1.46 0 01-.478-.3 1.371 1.371 0 01-.318-.455 1.438 1.438 0 01-.115-.58v-.008a1.426 1.426 0 01.113-.57 1.449 1.449 0 01.312-.46 1.418 1.418 0 01.474-.309 1.58 1.58 0 01.598-.111 1.708 1.708 0 01.045 0zm11.963.008a2.006 2.006 0 01.612.094 1.61 1.61 0 01.507.277l-.386.546a1.562 1.562 0 00-.39-.205 1.178 1.178 0 00-.388-.07.347.347 0 00-.208.052.154.154 0 00-.07.127v.008a.158.158 0 00.022.084.198.198 0 00.076.066.831.831 0 00.147.06c.062.02.14.04.236.061a3.389 3.389 0 01.43.122 1.292 1.292 0 01.328.17.678.678 0 01.207.24.739.739 0 01.071.337v.008a.865.865 0 01-.081.382.82.82 0 01-.229.285 1.032 1.032 0 01-.353.18 1.606 1.606 0 01-.46.061 2.16 2.16 0 01-.71-.116 1.718 1.718 0 01-.593-.346l.43-.514c.277.223.578.335.9.335a.457.457 0 00.236-.05.157.157 0 00.082-.142v-.008a.15.15 0 00-.02-.077.204.204 0 00-.073-.066.753.753 0 00-.143-.062 2.45 2.45 0 00-.233-.062 5.036 5.036 0 01-.413-.113 1.26 1.26 0 01-.331-.16.72.72 0 01-.222-.243.73.73 0 01-.082-.36v-.008a.863.863 0 01.074-.359.794.794 0 01.214-.283 1.007 1.007 0 01.34-.185 1.423 1.423 0 01.448-.066 2.006 2.006 0 01.025 0zm-9.358.025h.742l1.183 2.81h-.825l-.203-.499H8.623l-.198.498h-.81zm2.197.02h.814l.663 1.08.663-1.08h.814v2.79h-.766v-1.602l-.711 1.091h-.016l-.707-1.083v1.593h-.754zm3.469 0h2.235v.658h-1.473v.422h1.334v.61h-1.334v.442h1.493v.658h-2.255zm-5.3.897l-.315.793h.624zm-1.145 5.19h8.014l-4.09 1.348z"/></svg></a>
+              <a class="store-mark" href="https://eriksholmgame.com" target="_blank" rel="noopener" aria-label="eriksholmgame.com" title="eriksholmgame.com"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24Zm7.93 7h-3.18a18.6 18.6 0 0 0-1.6-4.6A10.04 10.04 0 0 1 19.930 7ZM12 2.04c.98 1.26 1.84 2.94 2.42 4.96H9.58C10.16 4.98 11.02 3.3 12 2.04ZM2.26 14a10.1 10.1 0 0 1 0-4h3.53a20.6 20.6 0 0 0 0 4H2.26Zm.81 2h3.18c.37 1.7.92 3.26 1.6 4.6A10.04 10.04 0 0 1 3.07 16Zm3.18-9H3.07a10.04 10.04 0 0 1 4.78-4.6A18.6 18.6 0 0 0 6.25 7ZM12 21.96c-.98-1.26-1.84-2.94-2.42-4.96h4.84c-.58 2.020-1.44 3.7-2.42 4.96ZM14.86 14H9.14a18.4 18.4 0 0 1 0-4h5.72a18.4 18.4 0 0 1 0 4Zm.29 6.6c.68-1.34 1.23-2.9 1.6-4.6h3.18a10.04 10.04 0 0 1-4.78 4.6ZM18.21 14a20.6 20.6 0 0 0 0-4h3.53a10.1 10.1 0 0 1 0 4h-3.53Z"/></svg></a>
+              <a class="store-mark" href="https://www.metacritic.com/game/eriksholm-the-stolen-dream/" target="_blank" rel="noopener" aria-label="Metacritic" title="Metacritic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11.99 0A12 12 0 1 0 24 12v-.014A12 12 0 0 0 11.99 0Zm-.055 2.564a9.399 9.399 0 0 1 9.407 9.389v.01a9.399 9.399 0 1 1-9.408-9.399Zm-1.61 17.198 2.046-2.046-3.94-3.94c-.165-.166-.345-.373-.442-.608-.221-.47-.318-1.203.221-1.742.664-.664 1.548-.387 2.406.47l3.788 3.788 2.046-2.046-3.954-3.954a2.48 2.48 0 0 1-.456-.622c-.263-.539-.25-1.216.235-1.7.677-.678 1.562-.429 2.544.553l3.677 3.677 2.046-2.046-3.982-3.982c-2.018-2.018-3.912-1.949-5.212-.65-.498.499-.802 1.024-.954 1.618a4.026 4.026 0 0 0-.055 1.686l-.027.028c-.996-.414-2.13-.166-3 .705-1.162 1.161-1.12 2.392-.982 3.11l-.042.043-1.009-.816-1.77 1.77a64.1 64.1 0 0 1 2.213 2.1z"/></svg></a>
+            </nav>
+            </section><div class="project-resources"><ul class="recognitions" aria-label="Where to play">
+                <li><a class="store" href="https://store.steampowered.com/app/2377280/Eriksholm_The_Stolen_Dream/#app_reviews_hash" target="_blank" rel="noopener"><span class="store-logo"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"/></svg></span><strong>“Overwhelmingly Positive”</strong><span>1.2K+ reviews</span></a></li>
+                <li><a class="store" href="https://store.playstation.com/en-gb/product/EB0757-PPSA20548_00-0286086241569047#star-rating" target="_blank" rel="noopener"><span class="store-logo"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8.984 2.596v17.547l3.915 1.261V6.688c0-.69.304-1.151.794-.991.636.18.76.814.76 1.505v5.875c2.441 1.193 4.362-.002 4.362-3.152 0-3.237-1.126-4.675-4.438-5.827-1.307-.448-3.728-1.186-5.39-1.502zm4.656 16.241l6.296-2.275c.715-.258.826-.625.246-.818-.586-.192-1.637-.139-2.357.123l-4.205 1.5V14.98l.24-.085s1.201-.42 2.913-.615c1.696-.18 3.785.03 5.437.661 1.848.601 2.04 1.472 1.576 2.072-.465.6-1.622 1.036-1.622 1.036l-8.544 3.107V18.86zM1.807 18.6c-1.9-.545-2.214-1.668-1.352-2.32.801-.586 2.16-1.052 2.16-1.052l5.615-2.013v2.313L4.205 17c-.705.271-.825.632-.239.826.586.195 1.637.15 2.343-.12L8.247 17v2.074c-.12.03-.256.044-.39.073-1.939.331-3.996.196-6.038-.479z"/></svg></span><strong>4.72/5 <svg class="rating-star" viewBox="0 0 24 24" role="img" aria-label="stars" focusable="false"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96z"/></svg></strong><span>1.6K+ ratings</span></a></li>
+              </ul></div></div>
+
+          <!-- External links -->
+
+
+        </div>
+      </article>
+
+      <!-- ============ RELEAP ============ -->
+      <article class="project" id="releap">
+        <div class="container">
+          <div class="project-stick">
+
+          <header class="project-header">
+            <p class="project-studio">Uppsala University</p>
+            <h2 class="project-title">ReLeap</h2>
+
+          </header>
+
+          <div class="gallery" data-gallery="ReLeap">
+            <img src="assets/releap/releap1.jpg" alt="ReLeap screenshot 1" loading="lazy" />
+            <img src="assets/releap/releap2.jpg" alt="ReLeap screenshot 2" loading="lazy" />
+            <img src="assets/releap/releap3.jpg" alt="ReLeap screenshot 3" loading="lazy" />
+            <img src="assets/releap/releap4.jpg" alt="ReLeap screenshot 4" loading="lazy" />
+            <img src="assets/releap/releap5.jpg" alt="ReLeap screenshot 5" loading="lazy" />
+            <img src="assets/releap/releap6.jpg" alt="ReLeap screenshot 6" loading="lazy" />
+            <img src="assets/releap/releap7.jpg" alt="ReLeap screenshot 7" loading="lazy" />
+            <img src="assets/releap/releap8.jpg" alt="ReLeap screenshot 8" loading="lazy" />
+            <img src="assets/releap/releap9.jpg" alt="ReLeap screenshot 9" loading="lazy" />
+            <img src="assets/releap/releap10.jpg" alt="ReLeap screenshot 10" loading="lazy" />
+            <img src="assets/releap/releap11.jpg" alt="ReLeap screenshot 11" loading="lazy" />
+            <img src="assets/releap/releap12.jpg" alt="ReLeap screenshot 12" loading="lazy" />
+          </div>
+
+          <div class="project-intro">
+            <div class="project-body">
+              <p>
+                A five-minute side-scrolling runner. Jump between rooftops, dodge obstacles, and angle your charge jumps to stick the landing.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="project-columns">
+            <div>
+              <h3 class="section-label">My contributions</h3>
+              <ul class="contributions">
+                <li>Kept the project on schedule</li>
+                <li>Organized, facilitated, and documented all playtest sessions</li>
+                <li>Developed the business strategy and model</li>
+                <li>Secured funding for my team to travel to GDC</li>
+                <li>Pitched ReLeap to investors in San Francisco at GDC</li>
+                <li>Produced all game music and SFX in Ableton Live and implemented in Unity</li>
+                <li>Designed levels in Unity</li>
+              </ul>
+            </div>
+            <div class="project-side"><figure class="project-gif">
+            <video src="assets/releap/gameplay.mp4" poster="assets/releap/gameplay-poster.jpg" autoplay loop muted playsinline aria-label="ReLeap gameplay"></video>
+          </figure></div>
+          </div>
+
+          <div class="project-body">
+            <p>
+              ReLeap was played on a custom arcade-like controller. A handlebar to jump and charge jumps, a foot slider to slide beneath obstacles.
+            </p>
+          </div>
+
+
+
+
+
+          </div>
+
+          <div class="project-extras"><section class="trailer-block" aria-label="releap trailer">
+              <div class="project-video" data-video-id="GugONZJkn5s" data-title="ReLeap — gameplay video">
+            <button class="video-play" aria-label="Play ReLeap gameplay video"
+              style="background-image: url('https://i.ytimg.com/vi/GugONZJkn5s/maxresdefault.jpg')">
+              <svg viewBox="0 0 80 80" class="play-icon" aria-hidden="true">
+                <circle cx="40" cy="40" r="32" fill="rgba(255,255,255,0.95)" />
+                <polygon points="33,24 33,56 58,40" fill="#0c0c0d" />
+              </svg>
+            </button>
+          </div>
+            </section><div class="project-resources"><ul class="recognitions" aria-label="Recognition">
+                <li><a class="store" href="https://www.gamedeveloper.com/marketing/alt-ctrl-gdc-showcase-i-releap-i-" target="_blank" rel="noopener"><span class="store-logo"><svg viewBox="0 0 300 104.059" aria-hidden="true" focusable="false"><g transform="translate(-270.84821,-363.77077)" > <g transform="matrix(1.3071895,0,0,-1.3071895,365.96716,420.57469)" > <path d="m 0,0 c 0,0 0.004,0.089 0,0.239 l 0,5.003 -5.686,0 c -0.02,0 -0.035,0.003 -0.053,0.003 l -23.437,0 0.872,-5.495 6.114,-2.516 c 2.517,-1.061 4.139,-2.128 4.139,-6.592 l 0.008,0.004 0,-11.111 c -2.596,-1.062 -6.133,-1.532 -10.497,-1.532 -7.429,0 -13.445,2.713 -18.043,8.016 -4.364,5.075 -6.485,11.087 -6.485,18.282 0,7.076 2.003,12.736 6.132,17.101 4.835,5.188 12.026,7.781 21.816,7.781 6.959,0 13.799,-1.768 20.757,-5.304 l 0.352,15.919 c -7.899,2.477 -15.802,3.657 -23.82,3.657 -13.326,0 -24.059,-3.895 -32.432,-11.676 -8.373,-7.666 -12.503,-17.219 -12.503,-28.657 0,-11.204 3.423,-20.521 10.382,-27.833 7.191,-7.663 16.981,-11.439 29.127,-11.439 12.146,0 23.233,2.595 33.257,7.901 L 0,0 z m 69.778,3.276 c 0,-13.304 -10.782,-24.09 -24.087,-24.084 -13.307,0 -24.088,10.78 -24.088,24.084 l 0,24.088 24.088,0.005 C 58.996,27.364 69.778,16.585 69.778,3.276 M 84.879,3.273 c 0,21.649 -17.545,39.188 -39.188,39.197 l -39.19,-0.01 0,-39.187 c 0,-21.645 17.544,-39.181 39.19,-39.181 21.643,-0.01 39.188,17.536 39.188,39.181 m 68.435,20.606 0.354,15.567 c -5.306,2.711 -12.147,4.009 -20.401,4.009 -13.326,0 -24.175,-4.009 -32.551,-11.913 -7.9,-7.547 -11.909,-17.099 -11.909,-28.54 0,-11.322 3.537,-20.517 10.495,-27.713 7.312,-7.663 17.219,-11.439 29.837,-11.439 9.552,0 18.75,2.713 27.595,8.256 l -4.835,12.383 c -6.488,-3.539 -12.974,-5.309 -19.576,-5.309 -7.193,0 -12.972,2.36 -17.336,7.196 -4.362,4.835 -6.486,10.73 -6.486,17.925 0,6.957 2.004,12.619 5.897,16.983 4.481,5.188 11.084,7.783 19.692,7.783 6.959,0 13.327,-1.77 19.224,-5.188" /> </g> </g></svg></span><strong>Game Developers Conference</strong><span>alt.ctrl.GDC exhibit · Alternative Control Award nomination · 2019</span></a></li>
+                <li><a class="store" href="https://game.speldesign.uu.se/projects/arcade-games/releap/" target="_blank" rel="noopener"><span class="store-logo"><svg viewBox="0 0 542 241" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M104.0 210.7 L104.0 188.3 L110.5 187.8 C119.0 187.1 127.0 183.2 133.9 176.3 C136.8 173.3 139.0 170.7 138.8 170.4 C138.5 170.2 136.1 170.9 133.4 172.0 C117.7 178.8 95.4 180.2 77.9 175.7 C43.3 166.7 17.6 138.6 11.9 103.6 C10.3 93.2 11.2 74.5 13.9 65.5 C26.1 24.7 63.2 -1.9 105.0 0.3 C115.4 0.9 125.5 3.1 133.7 6.7 L137.9 8.5 L128.5 28.5 C123.3 39.5 118.9 48.9 118.8 49.3 C118.6 49.7 116.7 49.4 114.5 48.5 C109.1 46.2 97.5 45.5 90.9 47.0 C77.7 50.1 66.5 59.0 60.8 70.9 C58.1 76.6 57.5 78.9 57.2 87.0 C56.7 97.8 58.9 106.1 64.0 113.4 C83.3 141.1 123.9 138.3 138.7 108.2 L142.5 100.6 L142.8 50.3 L143.1 0.0 L166.1 0.0 L189.1 -0.0 L188.8 81.7 L188.5 163.5 L185.2 173.0 C173.8 206.0 146.1 227.7 109.2 232.5 L104.0 233.2 L104.0 210.7 Z M290.2 210.9 L290.5 188.5 L297.0 187.8 C305.6 186.8 314.4 182.4 320.5 175.9 C323.1 173.2 325.0 170.7 324.8 170.5 C324.6 170.2 321.6 171.2 318.1 172.6 C303.1 178.7 282.2 180.1 265.5 176.1 C237.9 169.5 214.2 149.1 203.7 122.8 C199.5 112.3 197.9 105.2 197.3 93.5 C195.2 52.8 221.0 16.3 260.5 3.9 C272.5 0.2 287.7 -0.9 299.8 1.0 C306.1 2.1 320.4 6.3 322.8 7.8 C323.7 8.4 321.6 13.8 314.4 29.2 L304.8 49.7 L298.8 47.9 C283.4 43.1 266.0 47.8 254.7 59.9 C236.4 79.4 240.2 111.4 262.5 125.5 C275.8 134.0 292.5 134.9 306.2 127.9 C312.9 124.5 321.3 115.7 325.1 108.3 L328.5 101.6 L329.0 51.1 L329.5 0.5 L352.2 0.2 L375.0 -0.0 L375.0 79.8 C375.0 156.5 374.9 160.0 373.0 167.6 C364.2 202.0 333.2 228.3 296.2 232.5 L290.0 233.2 L290.2 210.9 Z M455.0 177.5 C432.4 172.9 411.3 158.8 398.5 139.5 C392.5 130.6 387.2 118.8 386.6 113.1 C386.3 111.1 385.6 107.5 385.0 105.0 C383.4 98.7 383.6 79.9 385.4 70.8 C389.5 50.0 402.8 29.8 421.2 16.7 C447.2 -1.9 482.4 -4.7 511.7 9.5 C524.6 15.8 542.0 30.0 540.7 33.3 C540.4 34.0 532.7 40.8 523.5 48.3 L506.7 62.0 L502.0 57.6 C481.0 37.9 446.4 44.3 433.8 70.3 C417.5 103.4 447.9 140.7 483.5 131.4 C490.5 129.6 496.8 126.2 502.4 121.0 L506.5 117.3 L524.3 131.8 L542.0 146.4 L536.3 152.3 C523.1 165.7 506.1 174.7 487.6 177.9 C479.6 179.4 463.0 179.1 455.0 177.5 Z M461.3 112.5 C448.0 105.7 442.5 89.8 449.0 77.1 C451.5 72.1 458.8 65.6 463.6 63.9 C468.7 62.2 477.6 62.3 482.1 64.3 C487.0 66.3 493.7 72.5 496.0 77.0 C500.6 86.1 499.1 98.0 492.4 105.8 C487.4 111.7 482.0 114.2 473.5 114.7 C467.4 115.1 465.8 114.8 461.3 112.5 Z"/></svg></span><strong>Gotland Game Conference</strong><span>Exhibited · 2018</span></a></li>
+                <li><a class="store" href="https://www.gameawards.se/Games/2018/releap" target="_blank" rel="noopener"><span class="store-logo"><svg viewBox="0 0 658 282" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M119.5 281.1 C118.9 280.6 108.7 274.9 96.8 268.4 L75.0 256.5 L75.0 240.8 L75.0 225.0 L58.5 225.0 L42.0 225.0 L42.0 160.2 L42.0 95.4 L50.8 90.3 C61.4 84.2 85.0 70.5 106.3 58.1 L122.0 48.9 L128.3 52.6 C131.7 54.6 140.8 59.9 148.5 64.3 C164.7 73.5 172.1 77.8 184.0 84.7 C188.7 87.4 194.6 90.9 197.2 92.4 L202.0 95.1 L202.0 140.4 L202.0 185.6 L188.2 193.3 C180.7 197.5 162.8 207.6 148.5 215.8 C134.2 224.0 122.2 230.5 121.8 230.3 C121.3 230.1 121.0 224.0 121.0 216.9 L121.0 203.9 L124.1 202.2 C125.8 201.3 130.0 198.9 133.4 196.9 C136.7 195.0 146.8 189.1 155.8 184.0 L172.0 174.6 L172.0 145.9 L172.0 117.1 L152.8 106.4 C142.2 100.5 130.9 94.3 127.7 92.6 L122.0 89.5 L117.2 92.1 C114.6 93.5 103.8 99.5 93.2 105.5 L74.0 116.4 L74.0 122.4 C74.0 125.8 73.5 142.2 73.0 159.0 C72.5 175.8 72.0 196.2 71.9 204.4 L71.6 219.3 L95.5 232.1 L119.5 244.9 L125.5 241.6 C128.8 239.8 144.6 230.7 160.5 221.5 C176.4 212.3 194.3 202.1 200.2 198.8 L211.0 192.8 L211.0 141.5 L211.0 90.1 L201.8 84.7 C196.7 81.7 184.2 74.4 174.0 68.5 C163.8 62.6 148.3 53.6 139.4 48.4 C130.6 43.2 122.8 39.0 122.3 39.0 C121.7 39.0 114.1 43.1 105.4 48.1 C86.2 59.2 88.9 57.6 59.5 74.5 C46.3 82.0 34.9 88.7 34.3 89.2 C33.3 90.0 33.0 103.2 32.8 146.9 L32.5 203.5 L28.0 206.3 C18.8 212.1 1.6 222.0 0.8 222.0 C0.4 222.0 0.0 187.9 0.0 146.1 L0.0 70.3 L8.2 65.5 C12.7 62.9 18.0 59.9 19.9 58.8 C30.3 53.0 40.4 47.2 47.5 42.9 C51.9 40.3 60.7 35.3 67.0 31.7 C73.3 28.2 88.3 19.6 100.3 12.7 L122.2 0.1 L147.3 14.6 C161.2 22.7 180.4 33.7 190.0 39.3 C199.6 44.8 209.5 50.5 212.0 52.0 C214.5 53.5 222.9 58.4 230.8 63.0 L245.0 71.2 L245.0 141.0 L245.0 210.9 L242.2 212.8 C240.7 213.8 234.6 217.5 228.5 221.0 C195.9 239.7 135.6 274.3 129.4 277.9 C121.9 282.2 121.0 282.5 119.5 281.1 Z M509.7 209.2 C509.4 208.8 513.6 197.5 519.0 184.0 C524.4 170.5 536.9 139.5 546.7 115.0 L564.5 70.5 L583.2 70.2 C601.2 70.0 601.9 70.0 603.0 72.0 C605.7 77.1 657.8 208.5 657.4 209.2 C656.8 210.2 625.9 210.2 624.5 209.2 C623.9 208.8 620.8 202.8 617.6 195.8 L611.8 183.2 L598.6 182.5 C591.4 182.2 578.8 182.0 570.6 182.2 L555.8 182.5 L549.7 195.5 C546.3 202.7 543.1 208.8 542.5 209.2 C541.2 210.2 510.3 210.2 509.7 209.2 Z M290.8 195.9 C283.2 188.7 277.0 182.4 277.0 181.9 C277.0 181.4 295.3 181.0 321.0 181.0 L365.0 181.0 L365.0 168.5 L365.0 156.0 L334.8 156.0 L304.5 155.9 L290.2 142.9 L276.0 129.8 L276.0 110.1 L276.0 90.4 L286.4 80.2 L296.7 70.0 L345.2 70.0 C371.9 70.0 393.9 70.3 394.2 70.6 C394.6 70.9 389.8 77.2 383.7 84.6 L372.5 98.0 L338.2 98.0 L303.9 98.0 L304.2 112.8 L304.5 127.5 L338.7 127.8 L372.8 128.0 L377.8 134.3 C380.6 137.7 385.6 143.9 388.9 148.0 L395.0 155.5 L395.0 168.9 L395.0 182.2 L388.8 193.9 C385.4 200.3 382.2 206.3 381.6 207.2 C380.6 208.9 377.6 209.0 342.5 209.0 L304.5 209.0 L290.8 195.9 Z M415.8 195.7 L407.0 182.4 L407.0 139.7 L407.0 97.0 L416.8 83.6 L426.5 70.1 L475.9 70.1 C519.7 70.0 525.1 70.2 524.6 71.5 C524.3 72.4 520.3 78.7 515.8 85.6 L507.5 98.1 L472.2 97.8 L437.0 97.5 L437.0 139.3 L437.0 181.0 L460.2 180.8 L483.5 180.5 L489.6 168.0 L495.7 155.5 L486.1 155.0 L476.5 154.5 L466.8 142.5 C461.5 135.9 457.1 130.2 457.0 129.8 C457.0 129.3 472.3 129.0 491.0 129.0 C518.7 129.0 525.0 129.2 525.0 130.3 C525.0 131.6 496.1 203.1 494.0 207.1 C493.0 208.9 491.5 209.0 458.7 209.0 L424.5 209.0 L415.8 195.7 Z M605.4 155.2 C605.6 154.8 602.4 144.7 598.3 132.7 L590.7 110.9 L584.6 111.2 L578.5 111.5 L573.7 124.0 C565.6 145.1 562.2 154.9 562.8 155.5 C563.7 156.3 604.8 156.1 605.4 155.2 Z"/></svg></span><strong>Swedish Game Awards</strong><span>Exhibited · 2018</span></a></li>
+              </ul></div></div>
+
+        </div>
+      </article>
+
+      <!-- ============ PROVINCIA ============ -->
+      <article class="project" id="provincia">
+        <div class="container">
+          <div class="project-stick">
+
+          <header class="project-header">
+            <p class="project-studio">Uppsala University</p>
+            <h2 class="project-title">Provincia</h2>
+
+          </header>
+
+          <div class="gallery" data-gallery="Provincia">
+            <img src="assets/provincia/provincia1.jpg" alt="Provincia screenshot 1" loading="lazy" />
+            <img src="assets/provincia/provincia2.jpg" alt="Provincia screenshot 2" loading="lazy" />
+            <img src="assets/provincia/provincia3.jpg" alt="Provincia screenshot 3" loading="lazy" />
+            <img src="assets/provincia/provincia4.jpg" alt="Provincia screenshot 4" loading="lazy" />
+            <img src="assets/provincia/provincia5.jpg" alt="Provincia screenshot 5" loading="lazy" />
+          </div>
+
+          <div class="project-intro">
+            <div class="project-body">
+              <p>
+                Provincia is an action-adventure dogfighting game. Play a bounty hunter with a personalized aircraft, taking quests across the world.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="project-columns">
+            <div>
+              <h3 class="section-label">My contributions</h3>
+              <ul class="contributions">
+                <li>Kept the project on track and on schedule</li>
+                <li>Ran team meetings and kept things moving</li>
+                <li>Organized, facilitated, and documented all playtest sessions</li>
+                <li>Produced all SFX in Ableton Live and implemented them in FMOD</li>
+                <li>Created and implemented an interactive music system in FMOD</li>
+                <li>Pitched Provincia at the Gotland Game Conference 2019</li>
+              </ul>
+            </div>
+            <div class="project-side"><figure class="project-gif">
+            <video src="assets/provincia/gameplay.mp4" poster="assets/provincia/gameplay-poster.jpg" autoplay loop muted playsinline aria-label="Provincia gameplay"></video>
+          </figure></div>
+          </div>
+
+
+
+
+
+          </div>
+
+          <div class="project-extras"><section class="trailer-block" aria-label="provincia trailer">
+              <div class="project-video" data-video-id="g4ztktUtWaA" data-title="Provincia — gameplay video">
+            <button class="video-play" aria-label="Play Provincia gameplay video"
+              style="background-image: url('https://i.ytimg.com/vi/g4ztktUtWaA/maxresdefault.jpg')">
+              <svg viewBox="0 0 80 80" class="play-icon" aria-hidden="true">
+                <circle cx="40" cy="40" r="32" fill="rgba(255,255,255,0.95)" />
+                <polygon points="33,24 33,56 58,40" fill="#0c0c0d" />
+              </svg>
+            </button>
+          </div>
+            </section><div class="project-resources"><ul class="recognitions" aria-label="Recognition">
+                <li><a class="store" href="https://www.gameawards.se/Games/2019/provincia" target="_blank" rel="noopener"><span class="store-logo"><svg viewBox="0 0 658 282" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M119.5 281.1 C118.9 280.6 108.7 274.9 96.8 268.4 L75.0 256.5 L75.0 240.8 L75.0 225.0 L58.5 225.0 L42.0 225.0 L42.0 160.2 L42.0 95.4 L50.8 90.3 C61.4 84.2 85.0 70.5 106.3 58.1 L122.0 48.9 L128.3 52.6 C131.7 54.6 140.8 59.9 148.5 64.3 C164.7 73.5 172.1 77.8 184.0 84.7 C188.7 87.4 194.6 90.9 197.2 92.4 L202.0 95.1 L202.0 140.4 L202.0 185.6 L188.2 193.3 C180.7 197.5 162.8 207.6 148.5 215.8 C134.2 224.0 122.2 230.5 121.8 230.3 C121.3 230.1 121.0 224.0 121.0 216.9 L121.0 203.9 L124.1 202.2 C125.8 201.3 130.0 198.9 133.4 196.9 C136.7 195.0 146.8 189.1 155.8 184.0 L172.0 174.6 L172.0 145.9 L172.0 117.1 L152.8 106.4 C142.2 100.5 130.9 94.3 127.7 92.6 L122.0 89.5 L117.2 92.1 C114.6 93.5 103.8 99.5 93.2 105.5 L74.0 116.4 L74.0 122.4 C74.0 125.8 73.5 142.2 73.0 159.0 C72.5 175.8 72.0 196.2 71.9 204.4 L71.6 219.3 L95.5 232.1 L119.5 244.9 L125.5 241.6 C128.8 239.8 144.6 230.7 160.5 221.5 C176.4 212.3 194.3 202.1 200.2 198.8 L211.0 192.8 L211.0 141.5 L211.0 90.1 L201.8 84.7 C196.7 81.7 184.2 74.4 174.0 68.5 C163.8 62.6 148.3 53.6 139.4 48.4 C130.6 43.2 122.8 39.0 122.3 39.0 C121.7 39.0 114.1 43.1 105.4 48.1 C86.2 59.2 88.9 57.6 59.5 74.5 C46.3 82.0 34.9 88.7 34.3 89.2 C33.3 90.0 33.0 103.2 32.8 146.9 L32.5 203.5 L28.0 206.3 C18.8 212.1 1.6 222.0 0.8 222.0 C0.4 222.0 0.0 187.9 0.0 146.1 L0.0 70.3 L8.2 65.5 C12.7 62.9 18.0 59.9 19.9 58.8 C30.3 53.0 40.4 47.2 47.5 42.9 C51.9 40.3 60.7 35.3 67.0 31.7 C73.3 28.2 88.3 19.6 100.3 12.7 L122.2 0.1 L147.3 14.6 C161.2 22.7 180.4 33.7 190.0 39.3 C199.6 44.8 209.5 50.5 212.0 52.0 C214.5 53.5 222.9 58.4 230.8 63.0 L245.0 71.2 L245.0 141.0 L245.0 210.9 L242.2 212.8 C240.7 213.8 234.6 217.5 228.5 221.0 C195.9 239.7 135.6 274.3 129.4 277.9 C121.9 282.2 121.0 282.5 119.5 281.1 Z M509.7 209.2 C509.4 208.8 513.6 197.5 519.0 184.0 C524.4 170.5 536.9 139.5 546.7 115.0 L564.5 70.5 L583.2 70.2 C601.2 70.0 601.9 70.0 603.0 72.0 C605.7 77.1 657.8 208.5 657.4 209.2 C656.8 210.2 625.9 210.2 624.5 209.2 C623.9 208.8 620.8 202.8 617.6 195.8 L611.8 183.2 L598.6 182.5 C591.4 182.2 578.8 182.0 570.6 182.2 L555.8 182.5 L549.7 195.5 C546.3 202.7 543.1 208.8 542.5 209.2 C541.2 210.2 510.3 210.2 509.7 209.2 Z M290.8 195.9 C283.2 188.7 277.0 182.4 277.0 181.9 C277.0 181.4 295.3 181.0 321.0 181.0 L365.0 181.0 L365.0 168.5 L365.0 156.0 L334.8 156.0 L304.5 155.9 L290.2 142.9 L276.0 129.8 L276.0 110.1 L276.0 90.4 L286.4 80.2 L296.7 70.0 L345.2 70.0 C371.9 70.0 393.9 70.3 394.2 70.6 C394.6 70.9 389.8 77.2 383.7 84.6 L372.5 98.0 L338.2 98.0 L303.9 98.0 L304.2 112.8 L304.5 127.5 L338.7 127.8 L372.8 128.0 L377.8 134.3 C380.6 137.7 385.6 143.9 388.9 148.0 L395.0 155.5 L395.0 168.9 L395.0 182.2 L388.8 193.9 C385.4 200.3 382.2 206.3 381.6 207.2 C380.6 208.9 377.6 209.0 342.5 209.0 L304.5 209.0 L290.8 195.9 Z M415.8 195.7 L407.0 182.4 L407.0 139.7 L407.0 97.0 L416.8 83.6 L426.5 70.1 L475.9 70.1 C519.7 70.0 525.1 70.2 524.6 71.5 C524.3 72.4 520.3 78.7 515.8 85.6 L507.5 98.1 L472.2 97.8 L437.0 97.5 L437.0 139.3 L437.0 181.0 L460.2 180.8 L483.5 180.5 L489.6 168.0 L495.7 155.5 L486.1 155.0 L476.5 154.5 L466.8 142.5 C461.5 135.9 457.1 130.2 457.0 129.8 C457.0 129.3 472.3 129.0 491.0 129.0 C518.7 129.0 525.0 129.2 525.0 130.3 C525.0 131.6 496.1 203.1 494.0 207.1 C493.0 208.9 491.5 209.0 458.7 209.0 L424.5 209.0 L415.8 195.7 Z M605.4 155.2 C605.6 154.8 602.4 144.7 598.3 132.7 L590.7 110.9 L584.6 111.2 L578.5 111.5 L573.7 124.0 C565.6 145.1 562.2 154.9 562.8 155.5 C563.7 156.3 604.8 156.1 605.4 155.2 Z"/></svg></span><strong>Best Execution in Audio</strong><span>Swedish Game Awards · 2019</span></a></li>
+                <li><a class="store" href="https://game.speldesign.uu.se/projects/3d-games/provincia/" target="_blank" rel="noopener"><span class="store-logo"><svg viewBox="0 0 542 241" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M104.0 210.7 L104.0 188.3 L110.5 187.8 C119.0 187.1 127.0 183.2 133.9 176.3 C136.8 173.3 139.0 170.7 138.8 170.4 C138.5 170.2 136.1 170.9 133.4 172.0 C117.7 178.8 95.4 180.2 77.9 175.7 C43.3 166.7 17.6 138.6 11.9 103.6 C10.3 93.2 11.2 74.5 13.9 65.5 C26.1 24.7 63.2 -1.9 105.0 0.3 C115.4 0.9 125.5 3.1 133.7 6.7 L137.9 8.5 L128.5 28.5 C123.3 39.5 118.9 48.9 118.8 49.3 C118.6 49.7 116.7 49.4 114.5 48.5 C109.1 46.2 97.5 45.5 90.9 47.0 C77.7 50.1 66.5 59.0 60.8 70.9 C58.1 76.6 57.5 78.9 57.2 87.0 C56.7 97.8 58.9 106.1 64.0 113.4 C83.3 141.1 123.9 138.3 138.7 108.2 L142.5 100.6 L142.8 50.3 L143.1 0.0 L166.1 0.0 L189.1 -0.0 L188.8 81.7 L188.5 163.5 L185.2 173.0 C173.8 206.0 146.1 227.7 109.2 232.5 L104.0 233.2 L104.0 210.7 Z M290.2 210.9 L290.5 188.5 L297.0 187.8 C305.6 186.8 314.4 182.4 320.5 175.9 C323.1 173.2 325.0 170.7 324.8 170.5 C324.6 170.2 321.6 171.2 318.1 172.6 C303.1 178.7 282.2 180.1 265.5 176.1 C237.9 169.5 214.2 149.1 203.7 122.8 C199.5 112.3 197.9 105.2 197.3 93.5 C195.2 52.8 221.0 16.3 260.5 3.9 C272.5 0.2 287.7 -0.9 299.8 1.0 C306.1 2.1 320.4 6.3 322.8 7.8 C323.7 8.4 321.6 13.8 314.4 29.2 L304.8 49.7 L298.8 47.9 C283.4 43.1 266.0 47.8 254.7 59.9 C236.4 79.4 240.2 111.4 262.5 125.5 C275.8 134.0 292.5 134.9 306.2 127.9 C312.9 124.5 321.3 115.7 325.1 108.3 L328.5 101.6 L329.0 51.1 L329.5 0.5 L352.2 0.2 L375.0 -0.0 L375.0 79.8 C375.0 156.5 374.9 160.0 373.0 167.6 C364.2 202.0 333.2 228.3 296.2 232.5 L290.0 233.2 L290.2 210.9 Z M455.0 177.5 C432.4 172.9 411.3 158.8 398.5 139.5 C392.5 130.6 387.2 118.8 386.6 113.1 C386.3 111.1 385.6 107.5 385.0 105.0 C383.4 98.7 383.6 79.9 385.4 70.8 C389.5 50.0 402.8 29.8 421.2 16.7 C447.2 -1.9 482.4 -4.7 511.7 9.5 C524.6 15.8 542.0 30.0 540.7 33.3 C540.4 34.0 532.7 40.8 523.5 48.3 L506.7 62.0 L502.0 57.6 C481.0 37.9 446.4 44.3 433.8 70.3 C417.5 103.4 447.9 140.7 483.5 131.4 C490.5 129.6 496.8 126.2 502.4 121.0 L506.5 117.3 L524.3 131.8 L542.0 146.4 L536.3 152.3 C523.1 165.7 506.1 174.7 487.6 177.9 C479.6 179.4 463.0 179.1 455.0 177.5 Z M461.3 112.5 C448.0 105.7 442.5 89.8 449.0 77.1 C451.5 72.1 458.8 65.6 463.6 63.9 C468.7 62.2 477.6 62.3 482.1 64.3 C487.0 66.3 493.7 72.5 496.0 77.0 C500.6 86.1 499.1 98.0 492.4 105.8 C487.4 111.7 482.0 114.2 473.5 114.7 C467.4 115.1 465.8 114.8 461.3 112.5 Z"/></svg></span><strong>Best Exhibit</strong><span>Gotland Game Conference · 2019</span></a></li>
+                <li><a class="store" href="https://game.speldesign.uu.se/projects/3d-games/provincia/" target="_blank" rel="noopener"><span class="store-logo"><svg viewBox="0 0 542 241" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M104.0 210.7 L104.0 188.3 L110.5 187.8 C119.0 187.1 127.0 183.2 133.9 176.3 C136.8 173.3 139.0 170.7 138.8 170.4 C138.5 170.2 136.1 170.9 133.4 172.0 C117.7 178.8 95.4 180.2 77.9 175.7 C43.3 166.7 17.6 138.6 11.9 103.6 C10.3 93.2 11.2 74.5 13.9 65.5 C26.1 24.7 63.2 -1.9 105.0 0.3 C115.4 0.9 125.5 3.1 133.7 6.7 L137.9 8.5 L128.5 28.5 C123.3 39.5 118.9 48.9 118.8 49.3 C118.6 49.7 116.7 49.4 114.5 48.5 C109.1 46.2 97.5 45.5 90.9 47.0 C77.7 50.1 66.5 59.0 60.8 70.9 C58.1 76.6 57.5 78.9 57.2 87.0 C56.7 97.8 58.9 106.1 64.0 113.4 C83.3 141.1 123.9 138.3 138.7 108.2 L142.5 100.6 L142.8 50.3 L143.1 0.0 L166.1 0.0 L189.1 -0.0 L188.8 81.7 L188.5 163.5 L185.2 173.0 C173.8 206.0 146.1 227.7 109.2 232.5 L104.0 233.2 L104.0 210.7 Z M290.2 210.9 L290.5 188.5 L297.0 187.8 C305.6 186.8 314.4 182.4 320.5 175.9 C323.1 173.2 325.0 170.7 324.8 170.5 C324.6 170.2 321.6 171.2 318.1 172.6 C303.1 178.7 282.2 180.1 265.5 176.1 C237.9 169.5 214.2 149.1 203.7 122.8 C199.5 112.3 197.9 105.2 197.3 93.5 C195.2 52.8 221.0 16.3 260.5 3.9 C272.5 0.2 287.7 -0.9 299.8 1.0 C306.1 2.1 320.4 6.3 322.8 7.8 C323.7 8.4 321.6 13.8 314.4 29.2 L304.8 49.7 L298.8 47.9 C283.4 43.1 266.0 47.8 254.7 59.9 C236.4 79.4 240.2 111.4 262.5 125.5 C275.8 134.0 292.5 134.9 306.2 127.9 C312.9 124.5 321.3 115.7 325.1 108.3 L328.5 101.6 L329.0 51.1 L329.5 0.5 L352.2 0.2 L375.0 -0.0 L375.0 79.8 C375.0 156.5 374.9 160.0 373.0 167.6 C364.2 202.0 333.2 228.3 296.2 232.5 L290.0 233.2 L290.2 210.9 Z M455.0 177.5 C432.4 172.9 411.3 158.8 398.5 139.5 C392.5 130.6 387.2 118.8 386.6 113.1 C386.3 111.1 385.6 107.5 385.0 105.0 C383.4 98.7 383.6 79.9 385.4 70.8 C389.5 50.0 402.8 29.8 421.2 16.7 C447.2 -1.9 482.4 -4.7 511.7 9.5 C524.6 15.8 542.0 30.0 540.7 33.3 C540.4 34.0 532.7 40.8 523.5 48.3 L506.7 62.0 L502.0 57.6 C481.0 37.9 446.4 44.3 433.8 70.3 C417.5 103.4 447.9 140.7 483.5 131.4 C490.5 129.6 496.8 126.2 502.4 121.0 L506.5 117.3 L524.3 131.8 L542.0 146.4 L536.3 152.3 C523.1 165.7 506.1 174.7 487.6 177.9 C479.6 179.4 463.0 179.1 455.0 177.5 Z M461.3 112.5 C448.0 105.7 442.5 89.8 449.0 77.1 C451.5 72.1 458.8 65.6 463.6 63.9 C468.7 62.2 477.6 62.3 482.1 64.3 C487.0 66.3 493.7 72.5 496.0 77.0 C500.6 86.1 499.1 98.0 492.4 105.8 C487.4 111.7 482.0 114.2 473.5 114.7 C467.4 115.1 465.8 114.8 461.3 112.5 Z"/></svg></span><strong>Jury Spotlight nomination</strong><span>Gotland Game Conference · 2019</span></a></li>
+              </ul></div></div>
+
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about" id="about">
+      <div class="container">
+        <div class="project-stick">
+          <header class="project-header">
+            <p class="project-studio">Level Designer · Stockholm</p>
+            <h2 class="project-title">About Me</h2>
+          </header>
+          <div class="about-grid">
+        <div class="about-side">
+          <div class="about-image">
+            <img src="assets/leoheadshot.png" alt="Léo Smith" />
+          </div>
+
+          <div class="about-contact">
+            <a id="contact-email" href="#" data-u="smithbros.leo" data-d="gmail.com" rel="noopener"><span class="arrow">→</span> <span class="contact-email-text">Email</span></a>
+            <a href="https://www.linkedin.com/in/leofelixsmith/" target="_blank" rel="noopener"><span class="arrow">→</span> LinkedIn</a>
+          </div>
+        </div>
+        <div class="about-body">
+          <p class="about-lead">
+            Making games is my passion, and the hands-on part is where I'm happiest:
+            blocking out a level, stringing together the moments that make it click,
+            and playtesting until it feels right.
+          </p>
+
+
+          <h3 class="section-label spaced">Education</h3>
+          <ul class="recognitions">
+            <li><strong>MS Entrepreneurship and Business Design</strong><span>Chalmers University of Technology · 2020–2022</span></li>
+            <li><strong>BA Game Design and Project Management</strong><span>Uppsala University · 2017–2020</span></li>
+          </ul>
+
+          <h3 class="section-label spaced">Languages</h3>
+          <ul class="tag-list">
+            <li>English (native)</li>
+            <li>German (fluent)</li>
+            <li>French (fluent)</li>
+            <li>Swedish (proficient)</li>
+          </ul>
+
+          <h3 class="section-label spaced">In my free time</h3>
+          <ul class="tag-list">
+            <li>🧗🏻 climbing</li>
+            <li>🎹 producing music</li>
+            <li>🐕 walks in nature with my dog</li>
+            <li>🎲 board game nights with friends</li>
+          </ul>
+        </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js?v=96"></script>
+</body>
+</html>
